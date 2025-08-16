@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String  @id @default(cuid())
+  email     String  @unique
+  password  String
+  firstName String?
+  lastName  String?
+
+  role      Role      @default(USER)
+  products  Product[]
+  carts     Cart[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Product {
+  id           String   @id @default(cuid())
+  category     String
+  categorySlug String
+  title        String
+  gender       String
+  model        String
+  slug         String   @unique
+  price        Int
+  sizes        String[]
+  color        String
+  colorLabel   String
+  img          String[] // массив изображений
+  season       String
+
+  composition   String[]
+  peculiarities String[]
+  description   String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  cartItems CartItem[]
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  items     CartItem[]
+  userId    String?
+  user      User?      @relation(fields: [userId], references: [id])
+  guestId   String?    @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id        String @id @default(cuid())
+  cartId    String
+  productId String
+  quantity  Int
+  size      String
+
+  cart    Cart    @relation(fields: [cartId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

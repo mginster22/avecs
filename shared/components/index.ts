@@ -1,0 +1,11 @@
+export {Header} from './header';
+export { InfoHeader } from './info-header';
+export {BannerBlock} from './banner-block';
+export {InfoCartBlock} from './info-cart-block';
+export {ProductItem} from './product-item';
+export {NewCollectionBlock} from './new-collection-block';
+export {ModalAddToCart} from './modal-add-to-cart';
+export {SlugPageBlock} from './slug-page-block';
+export {ProductsWithFilters} from './products-with-filters';
+export {SwiperBlock} from './swiper-block';
+export {CharachteristikProductBlock} from './charachteristik-product-block';
