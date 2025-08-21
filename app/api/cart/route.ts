@@ -69,6 +69,7 @@ export async function POST(req: Request) {
     where: {
       cartId: cart.id,
       productId,
+      size,
     },
   });
   if (existingItem) {
@@ -80,6 +81,7 @@ export async function POST(req: Request) {
         quantity: {
           increment: quantity,
         },
+        size,
       },
     });
     return NextResponse.json(updatedItem, { status: 200 });

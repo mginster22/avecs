@@ -126,6 +126,7 @@ exports.Prisma.UserScalarFieldEnum = {
   password: 'password',
   firstName: 'firstName',
   lastName: 'lastName',
+  phone: 'phone',
   role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -140,7 +141,6 @@ exports.Prisma.ProductScalarFieldEnum = {
   model: 'model',
   slug: 'slug',
   price: 'price',
-  sizes: 'sizes',
   color: 'color',
   colorLabel: 'colorLabel',
   img: 'img',
@@ -151,6 +151,13 @@ exports.Prisma.ProductScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   userId: 'userId'
+};
+
+exports.Prisma.ProductSizeScalarFieldEnum = {
+  id: 'id',
+  size: 'size',
+  quantity: 'quantity',
+  productId: 'productId'
 };
 
 exports.Prisma.CartScalarFieldEnum = {
@@ -167,6 +174,34 @@ exports.Prisma.CartItemScalarFieldEnum = {
   productId: 'productId',
   quantity: 'quantity',
   size: 'size',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.OrderScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  guestId: 'guestId',
+  total: 'total',
+  status: 'status',
+  payment: 'payment',
+  isPaid: 'isPaid',
+  email: 'email',
+  phone: 'phone',
+  region: 'region',
+  city: 'city',
+  branch: 'branch',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.OrderItemScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  productId: 'productId',
+  quantity: 'quantity',
+  size: 'size',
+  price: 'price',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -190,11 +225,27 @@ exports.Role = exports.$Enums.Role = {
   ADMIN: 'ADMIN'
 };
 
+exports.OrderStatus = exports.$Enums.OrderStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  SHIPPED: 'SHIPPED',
+  COMPLETED: 'COMPLETED',
+  CANCELED: 'CANCELED'
+};
+
+exports.PaymentType = exports.$Enums.PaymentType = {
+  CASH: 'CASH',
+  CARD: 'CARD'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Product: 'Product',
+  ProductSize: 'ProductSize',
   Cart: 'Cart',
-  CartItem: 'CartItem'
+  CartItem: 'CartItem',
+  Order: 'Order',
+  OrderItem: 'OrderItem'
 };
 
 /**

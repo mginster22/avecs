@@ -33,8 +33,8 @@ export const GenderPageItems: React.FC<Props> = ({
     accessories?: string;
   }
   return (
-    <div className={cn("flex flex-col gap-4")}>
-      <div className="grid grid-cols-6 gap-4 px-4">
+    <div className={cn("flex flex-col gap-4 max-lg:gap-0")}>
+      <div className="grid grid-cols-6 gap-4 px-4 max-lg:grid-cols-3 ">
         {categoryGenderFilter.map((category) => {
           const categoryImgMap = {
             men: category.imgMen,

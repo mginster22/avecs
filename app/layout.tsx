@@ -1,13 +1,9 @@
 import type { Metadata } from "next";
 import { Montserrat, Roboto } from "next/font/google";
 import "./globals.css";
-import { Header, InfoHeader, ModalAddToCart } from "@/shared/components";
+import { Footer, Header, InfoHeader } from "@/shared/components";
 import Providers from "@/shared/components/providers";
 import { ModalCart } from "@/shared/components/modal-cart";
-import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { notFound } from "next/navigation";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -35,9 +31,7 @@ export default async function RootLayout({
           <InfoHeader />
           <Header />
           <ModalCart />
-
-          <ModalAddToCart />
-          {children}
+          <div className="flex-1">{children}</div>
         </Providers>
       </body>
     </html>

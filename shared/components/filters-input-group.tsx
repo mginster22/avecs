@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { filters } from "@/constants/filters";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -61,107 +61,112 @@ export default function FiltersInputGroup({
     });
   };
 
-
-
   return (
-    <div
-      className={cn(
-        "grid grid-cols-4 gap-4 mt-10",
-        isCategorySlug && "grid-cols-3"
-      )}
-      ref={containerRef}
-    >
-      {filters
-        .filter(({ id }) => {
-          if (!isCategorySlug) return true; // если флаг не включен — показываем всё
-          return id === "color" || id === "season" || id === "price"; // показываем только нужные
-        })
-        .map(({ id, name, options, type }) => (
-          <div key={id} className="relative">
-            <button
-              onClick={() => toggleCategory(id)}
-              className="bg-chart-4 p-3 w-full text-start flex items-center justify-between"
-            >
-              {name} <ChevronDown />
-            </button>
+    <div>
+      <div className="flex items-center gap-2 max-lg:hidden">
+        <SlidersHorizontal />
+        <h1 className="text-2xl font-light text-chart-2 ">Фільтр</h1>
+      </div>
 
-            {openCategory === id && (
-              <div className="absolute left-0 top-0 bg-white shadow-xl p-4 w-full z-50">
-                <div
-                  className="flex items-center justify-between mb-2"
-                  onClick={() => toggleCategory(id)}
-                >
-                  <p>{name.toUpperCase()}</p>
-                  <ChevronDown />
-                </div>
+      <div
+        className={cn(
+          "grid grid-cols-4 gap-4 mt-10 max-lg:hidden",
+          isCategorySlug && "grid-cols-3"
+        )}
+        ref={containerRef}
+      >
+        {filters
+          .filter(({ id }) => {
+            if (!isCategorySlug) return true; // если флаг не включен — показываем всё
+            return id === "color" || id === "season" || id === "price"; // показываем только нужные
+          })
+          .map(({ id, name, options, type }) => (
+            <div key={id} className="relative">
+              <button
+                onClick={() => toggleCategory(id)}
+                className="bg-chart-4 p-3 w-full text-start flex items-center justify-between"
+              >
+                {name} <ChevronDown />
+              </button>
 
-                {type === "checkbox" &&
-                  options?.map(({ label, count, color }) => (
-                    <label
-                      key={label}
-                      className="flex items-center justify-between gap-2 cursor-pointer mb-1"
-                    >
-                      <span className="flex items-center gap-2">
+              {openCategory === id && (
+                <div className="absolute left-0 top-0 bg-white shadow-xl p-4 w-full z-50">
+                  <div
+                    className="flex items-center justify-between mb-2"
+                    onClick={() => toggleCategory(id)}
+                  >
+                    <p>{name.toUpperCase()}</p>
+                    <ChevronDown />
+                  </div>
+
+                  {type === "checkbox" &&
+                    options?.map(({ label, count, color }) => (
+                      <label
+                        key={label}
+                        className="flex items-center justify-between gap-2 cursor-pointer mb-1"
+                      >
+                        <span className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={
+                              selectedOptions[id]?.includes(color ?? label) ||
+                              false
+                            }
+                            onChange={() =>
+                              toggleOptionSimple(id, color ?? label)
+                            }
+                          />
+                          {label}
+                        </span>
+                        {count && (
+                          <span className="text-[10px] bg-chart-4 p-[3px] rounded-full">
+                            {count}
+                          </span>
+                        )}
+                      </label>
+                    ))}
+
+                  {type === "range" && (
+                    <div className="flex flex-col gap-4">
+                      <div>
+                        <label>Min: {priceRange.min}</label>
                         <input
-                          type="checkbox"
-                          checked={
-                            selectedOptions[id]?.includes(color ?? label) ||
-                            false
-                          }
-                          onChange={() =>
-                            toggleOptionSimple(id, color ?? label)
+                          type="range"
+                          min={0}
+                          max={9000}
+                          step={10}
+                          value={priceRange.min}
+                          onChange={(e) =>
+                            setPriceRange((prev) => ({
+                              ...prev,
+                              min: Math.min(Number(e.target.value), prev.max),
+                            }))
                           }
                         />
-                        {label}
-                      </span>
-                      {count && (
-                        <span className="text-[10px] bg-chart-4 p-[3px] rounded-full">
-                          {count}
-                        </span>
-                      )}
-                    </label>
-                  ))}
-
-                {type === "range" && (
-                  <div className="flex flex-col gap-4">
-                    <div>
-                      <label>Min: {priceRange.min}</label>
-                      <input
-                        type="range"
-                        min={0}
-                        max={9000}
-                        step={10}
-                        value={priceRange.min}
-                        onChange={(e) =>
-                          setPriceRange((prev) => ({
-                            ...prev,
-                            min: Math.min(Number(e.target.value), prev.max),
-                          }))
-                        }
-                      />
+                      </div>
+                      <div>
+                        <label>Max: {priceRange.max}</label>
+                        <input
+                          type="range"
+                          min={0}
+                          max={9000}
+                          step={10}
+                          value={priceRange.max}
+                          onChange={(e) =>
+                            setPriceRange((prev) => ({
+                              ...prev,
+                              max: Math.max(Number(e.target.value), prev.min),
+                            }))
+                          }
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <label>Max: {priceRange.max}</label>
-                      <input
-                        type="range"
-                        min={0}
-                        max={9000}
-                        step={10}
-                        value={priceRange.max}
-                        onChange={(e) =>
-                          setPriceRange((prev) => ({
-                            ...prev,
-                            max: Math.max(Number(e.target.value), prev.min),
-                          }))
-                        }
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        ))}
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+      </div>
     </div>
   );
 }

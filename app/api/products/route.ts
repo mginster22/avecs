@@ -7,6 +7,9 @@ export async function GET() {
       orderBy: {
         createdAt: "desc",
       },
+      include:{
+        sizes: true
+      }
     });
     return NextResponse.json(data);
   } catch (error) {

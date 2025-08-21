@@ -29,13 +29,13 @@ const firstMenuItems = [
 ];
 export const InfoHeader: React.FC<Props> = ({ className }) => {
   return (
-    <div className="bg-[#25387C] px-10 py-2 flex items-center justify-between text-accent text-xs">
-      <div className="flex items-center gap-2">
+    <div className="bg-[#25387C] px-10 py-2 flex items-center justify-between text-accent text-xs  max-lg:justify-center ">
+      <div className="flex items-center gap-2 max-lg:hidden">
         <img src="/ua.svg" alt="ua" className="w-6" />
         <DollarSign color="white" />
       </div>
-      <p className="ml-40">Безкоштовна доставка вiд 2000 грн</p>
-      <ul className="flex gap-2">
+      <p className="ml-40 max-lg:ml-0">Безкоштовна доставка вiд 2000 грн</p>
+      <ul className="flex gap-2 max-lg:hidden">
         {firstMenuItems.map((item, i) => (
           <Link
             href={item.href}

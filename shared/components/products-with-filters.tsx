@@ -1,6 +1,5 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { SlidersHorizontal } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import FiltersInputGroup from "./filters-input-group";
 import { ProductItem } from "./product-item";
@@ -23,7 +22,6 @@ export const ProductsWithFilters: React.FC<Props> = ({
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, string[]>
   >({});
-
   const [priceRange, setPriceRange] = useState({ min: 0, max: 9000 });
 
   const filteredProducts = useMemo(() => {
@@ -50,8 +48,8 @@ export const ProductsWithFilters: React.FC<Props> = ({
 
         let productValue;
 
-        if (categoryId === "size") {
-          productValue = product.sizes;
+        if (categoryId === "sizes") {
+          productValue = product.sizes?.map((s:any) => s.size) || []
         } else {
           productValue = product[categoryId];
         }
@@ -77,21 +75,20 @@ export const ProductsWithFilters: React.FC<Props> = ({
   }, [itemsFilter, selectedOptions, priceRange]);
 
   return (
-    <div className="mt-2 px-4">
-      <div>
-        <div className="flex items-center gap-2">
-          <SlidersHorizontal />
-          <h1 className="text-2xl font-light text-chart-2">Фільтр</h1>
-        </div>
-        <FiltersInputGroup
-          selectedOptions={selectedOptions}
-          setSelectedOptions={setSelectedOptions}
-          priceRange={priceRange}
-          setPriceRange={setPriceRange}
-          isCategorySlug={isCategorySlug}
-        />
-      </div>
-      <div className={cn("grid grid-cols-4 gap-4  mt-10", className)}>
+    <div className="mt-2 px-4  max-lg:mt-0">
+      <FiltersInputGroup
+        selectedOptions={selectedOptions}
+        setSelectedOptions={setSelectedOptions}
+        priceRange={priceRange}
+        setPriceRange={setPriceRange}
+        isCategorySlug={isCategorySlug}
+      />
+      <div
+        className={cn(
+          "grid grid-cols-4 gap-4  mt-10 max-lg:grid-cols-2",
+          className
+        )}
+      >
         {filteredProducts.map((product) => (
           <ProductItem product={product} key={product.slug} />
         ))}

@@ -43,9 +43,9 @@ const MyAccountPage: React.FC<Props> = ({ className }) => {
 
     
   return (
-    <div className={cn("pb-10", className)}>
+    <div className={cn("pb-10 flex flex-col gap-10", className)}>
       <MainImageBlock text="Вітаємо вас в особистому кабінеті AVECS!" />
-      <div className="grid grid-cols-3 gap-4 px-4 mt-10">
+      <div className="grid grid-cols-3 gap-4 px-4 mt-10 max-lg:grid-cols-1 max-lg:mt-0">
         {userMenuItems.map((item, i) => (
           <div key={i} className="flex flex-col gap-4 border-1 p-4">
             <p className="font-bold uppercase">{item.title}</p>

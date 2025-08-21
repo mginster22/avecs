@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import {  ProductsWithFilters } from "@/shared/components";
+import { ProductsWithFilters } from "@/shared/components";
 import { Product } from "@/types/product";
 import { ChevronRight, House } from "lucide-react";
 import Link from "next/link";
@@ -27,8 +27,8 @@ const CategorySlugItems: React.FC<Props> = ({
       : categorySlug.replace("-", " ");
 
   return (
-    <div className={cn("flex flex-col")}>
-      <nav className="mb-4 text-sm text-gray-600 px-4 flex items-center">
+    <div className={cn("flex flex-col ")}>
+      <nav className="mt-4 mb-4 text-sm text-gray-600 px-4 flex items-center">
         <Link href="/">
           <House size={16} />
         </Link>
@@ -43,14 +43,14 @@ const CategorySlugItems: React.FC<Props> = ({
         </Link>
       </nav>
 
-      <h1 className="text-3xl font-bold mb-6 px-4">{categoryTitle}</h1>
-      <div className="">
-        <ProductsWithFilters
-          itemsFilter={productsCategorySlug}
-          genderType={gender}
-          isCategorySlug={true}
-        />
-      </div>
+      <h1 className="text-3xl font-bold mb-6 px-4 max-lg:mb-0">
+        {categoryTitle}
+      </h1>
+      <ProductsWithFilters
+        itemsFilter={productsCategorySlug}
+        genderType={gender}
+        isCategorySlug={true}
+      />
     </div>
   );
 };

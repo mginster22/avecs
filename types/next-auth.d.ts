@@ -7,6 +7,7 @@ declare module "next-auth" {
       email?: string | null;
       firstName?: string | null;
       lastName?: string | null;
+      phone?: string | null;
     } & DefaultSession["user"];
   }
 
@@ -14,11 +15,13 @@ declare module "next-auth" {
     id: string;
     firstName?: string | null;
     lastName?: string | null;
+    phone?: string | null;
   }
 
   interface JWT {
     id: string;
     firstName?: string | null;
     lastName?: string | null;
+    phone?: string | null;
   }
 }

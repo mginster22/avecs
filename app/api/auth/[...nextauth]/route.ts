@@ -13,6 +13,7 @@ export const authOptions: AuthOptions = {
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
+        phone: { label: "Phone", type: "tel" },
       },
       async authorize(credentials, req) {
         if (!credentials) return null;
@@ -22,7 +23,6 @@ export const authOptions: AuthOptions = {
             email: credentials.email,
           },
         });
-        console.log(user);
         if (!user) return null;
         if (!(await compare(credentials.password, user.password))) return null;
 
@@ -36,6 +36,7 @@ export const authOptions: AuthOptions = {
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
+          phone: user.phone,
         };
       },
     }),
@@ -47,6 +48,7 @@ export const authOptions: AuthOptions = {
         token.id = user.id;
         token.firstName = user.firstName; // <-- добавляем
         token.lastName = user.lastName;
+        token.phone = user.phone;
       }
       return token;
     },
@@ -57,6 +59,7 @@ export const authOptions: AuthOptions = {
         session.user.id = token.id as string;
         session.user.firstName = token.firstName as string; // <-- добавляем
         session.user.lastName = token.lastName as string;
+        session.user.phone=token.phone as string;
       }
       return session;
     },

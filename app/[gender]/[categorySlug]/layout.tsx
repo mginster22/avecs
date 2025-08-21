@@ -38,12 +38,5 @@ export default async function CategoryLayout({
   children,
   params,
 }: LayoutProps) {
-  
-
-  return (
-    <div className=" px-4 py-8">
-
-      <section>{children}</section>
-    </div>
-  );
+  return <section>{children}</section>;
 }

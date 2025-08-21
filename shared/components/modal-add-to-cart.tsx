@@ -17,7 +17,7 @@ export const ModalAddToCart: React.FC<Props> = ({ className }) => {
   return (
     <div
       className={cn(
-        "fixed top-14 right-10 w-[420px] h-[80px] z-[60] flex items-center gap-3 bg-accent text-primary px-4 py-2 border-1 border-primary shadow-lg transition-all duration-300",
+        "fixed top-14 right-10 w-[420px] h-[80px] z-[60] flex items-center gap-3 bg-accent text-primary px-4 py-2 border-1 border-primary shadow-lg transition-all duration-300 max-lg:right-4 max-lg:w-[340px] max-lg:h-[60px]",
         isAddToCart
           ? "opacity-100 translate-y-0"
           : "opacity-0 -translate-y-4 pointer-events-none"

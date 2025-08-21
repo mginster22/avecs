@@ -15,7 +15,10 @@ model User {
   firstName String?
   lastName  String?
 
-  role      Role      @default(USER)
+  phone String
+  role  Role   @default(USER)
+
+  orders    Order[]
   products  Product[]
   carts     Cart[]
   createdAt DateTime  @default(now())
@@ -36,7 +39,6 @@ model Product {
   model        String
   slug         String   @unique
   price        Int
-  sizes        String[]
   color        String
   colorLabel   String
   img          String[] // массив изображений
@@ -51,7 +53,19 @@ model Product {
   userId String?
   user   User?   @relation(fields: [userId], references: [id])
 
+  orderItems OrderItem[]
+  sizes      ProductSize[]
+
   cartItems CartItem[]
+}
+
+model ProductSize {
+  id       String @id @default(cuid())
+  size     String
+  quantity Int
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
 }
 
 model Cart {
@@ -76,4 +90,56 @@ model CartItem {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id String @id @default(cuid())
+
+  userId  String?
+  guestId String?
+
+  user    User?       @relation(fields: [userId], references: [id])
+  items   OrderItem[]
+  total   Int // общая сумма заказа
+  status  OrderStatus @default(PENDING) // 🔹 статус заказа
+  payment PaymentType @default(CASH) // 🔹 тип оплаты
+  isPaid  Boolean     @default(false) // 🔹 флаг оплаты
+
+  email String
+  phone String
+
+  region String
+  city   String
+  branch String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderItem {
+  id        String @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  size      String
+  price     Int // 🔹 фиксируем цену товара на момент покупки
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum OrderStatus {
+  PENDING // заказ создан, но ещё не обработан
+  PAID // оплачен
+  SHIPPED // отправлен
+  COMPLETED // доставлен
+  CANCELED // отменён
+}
+
+enum PaymentType {
+  CASH // наличные
+  CARD // карта (LiqPay и т.д.)
 }

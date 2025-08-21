@@ -26,7 +26,7 @@ export const NewCollectionBlock: React.FC<Props> = ({
     .slice(0, 8);
 
   return (
-    <div className={cn("flex px-4 mt-10 gap-10 pb-20")}>
+    <div className={cn("flex px-4 mt-10 gap-10 pb-20","max-lg:flex-col")}>
       {/* Левая часть  */}
       <div className="flex flex-col gap-4 w-1/3">
         <h1 className={cn("uppercase text-6xl max-w-40")}>Топові новинки</h1>
@@ -43,8 +43,8 @@ export const NewCollectionBlock: React.FC<Props> = ({
       </div>
 
       {/* Правая часть - слайдер */}
-      <div className="w-[76%] flex items-center">
-        <SwiperBlock products={newProducts} />
+      <div className="w-[76%] flex items-center  max-lg:w-full">
+        <SwiperBlock products={newProducts} isAdaptive={true}/>
       </div>
     </div>
   );

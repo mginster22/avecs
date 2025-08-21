@@ -9,3 +9,6 @@ export {SlugPageBlock} from './slug-page-block';
 export {ProductsWithFilters} from './products-with-filters';
 export {SwiperBlock} from './swiper-block';
 export {CharachteristikProductBlock} from './charachteristik-product-block';
+export {InfoDeliveryOplata} from './info-delivery-oplata';
+export {AuthItemsBlock} from './auth-items-block';
+export {Footer} from './footer';

@@ -1,11 +1,16 @@
 "use client";
 import { categoryProducts } from "@/constants/categoryProducts";
 import useCartStore from "@/store/useCartStore";
-import { Heart, Search, ShoppingCart, User } from "lucide-react";
+import { Heart, Menu, Search, ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
-import React, { use } from "react";
+import React, { use, useState } from "react";
 import { useGetCart } from "../hooks/useGetCart";
 import { useSession } from "next-auth/react";
+import { ModalAddToCart } from "./modal-add-to-cart";
+import { cn } from "@/lib/utils";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { BurgerMenu } from "./burger-menu";
 
 interface Props {
   className?: string;
@@ -48,15 +53,28 @@ export const Header: React.FC<Props> = ({ className }) => {
 
   const { data: sessionData, status } = useSession();
   const { toggleCart } = useCartStore();
-  
+
+  const deleteOrder = useMutation({
+    mutationFn: async () => {
+      await axios.delete(`/api/checkout`);
+    },
+  });
+  const [active, setActive] = useState(false);
   return (
-    <div className="flex items-center justify-between px-10 py-4  sticky top-0 bg-secondary shadow-md  z-40">
+    <div
+      className={cn(
+        "flex items-center justify-between px-10 py-4  sticky top-0 bg-secondary shadow-md  z-40 max-lg:px-2"
+      )}
+    >
+      {active && <BurgerMenu active={active} setActive={setActive} />}
+
+      <ModalAddToCart />
       <div className="flex items-center gap-20">
         <Link href="/">
-          <img src="/logo.png" alt="logo" className="w-26" />
+          <img src="/logo.png" alt="logo" className="w-26 max-lg:w-18" />
         </Link>
 
-        <ul className="flex gap-10 relative">
+        <ul className={cn("flex gap-10 relative", "max-lg:hidden")}>
           {secondMenuItems.map((item, i) => (
             <li key={i} className="relative group cursor-pointer">
               <span className="hover:text-chart-1 transition-all text-lg text-chart-2 tracking-widest">
@@ -91,7 +109,12 @@ export const Header: React.FC<Props> = ({ className }) => {
       </div>
 
       <div className="flex items-center gap-4">
-        <label className="relative flex items-center transition-all duration-300 border-b border-accent-foreground focus-within:border focus-within:border-accent-foreground focus-within:rounded-xl ">
+        <label
+          className={cn(
+            "relative flex items-center transition-all duration-300 border-b border-accent-foreground focus-within:border focus-within:border-accent-foreground focus-within:rounded-xl ",
+            "max-lg:hidden"
+          )}
+        >
           <Search className="absolute left-3 text-gray-500 pointer-events-none transition-all duration-300 " />
           <input
             className="outline-none pl-10 pr-4 py-2 w-40 transition-all duration-300 focus:w-90"
@@ -100,10 +123,13 @@ export const Header: React.FC<Props> = ({ className }) => {
         </label>
 
         {/* Кнопки */}
-        <div className="relative flex items-center gap-4">
-          <Link href={status === "authenticated" ? "/my-account" : "/auth/signin"} suppressHydrationWarning > 
+        <div className="relative flex items-center gap-4 ">
+          <Link
+            href={status === "authenticated" ? "/my-account" : "/auth/signin"}
+            suppressHydrationWarning
+          >
             {status === "authenticated" ? (
-            sessionData?.user.firstName
+              sessionData?.user.firstName
             ) : (
               <User />
             )}
@@ -118,6 +144,7 @@ export const Header: React.FC<Props> = ({ className }) => {
               {data?.length}
             </span>
           </div>
+          <Menu className="hidden max-lg:block" onClick={()=> setActive(true)}/>
         </div>
       </div>
     </div>

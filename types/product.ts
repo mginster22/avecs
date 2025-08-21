@@ -1,3 +1,8 @@
+export interface ProductSize {
+  id: string;
+  size: string; // например "S"
+  quantity: number; // сколько штук осталось
+}
 export interface Product {
   id: string;
   category: string;
@@ -10,7 +15,8 @@ export interface Product {
   composition: string[];
   peculiarities: string[];
   price: number;
-  sizes: string[];
+  season: string;
+  sizes?: ProductSize[];
   color: string;
   colorLabel: string;
   img: string[];
@@ -22,16 +28,19 @@ export interface CartItem {
   id: string;
   productId: string;
   quantity: number;
+  cartId: string;
   product: Product;
   size: string;
+  createdAt: string;
+  updatedAt: string;
 }
 export interface Cart {
-  id: string;            // уникальный идентификатор корзины
-  items: CartItem[];     // массив товаров в корзине
+  id: string; // уникальный идентификатор корзины
+  items: CartItem[]; // массив товаров в корзине
   userId?: string | null; // id зарегистрированного пользователя (если корзина авторизованного)
   guestId?: string | null; // уникальный id для гостя (например, cookie)
-  createdAt: Date;       // дата создания корзины
-  updatedAt: Date;       // дата последнего обновления корзины
+  createdAt: Date; // дата создания корзины
+  updatedAt: Date; // дата последнего обновления корзины
 }
 
 export interface CartWithItems {
@@ -43,6 +52,7 @@ export interface CartWithItems {
   items: {
     id: string;
     quantity: number;
+    size: string;
     product: {
       id: string;
       title: string;

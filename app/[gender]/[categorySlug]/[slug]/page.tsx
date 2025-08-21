@@ -15,24 +15,25 @@ interface Props {
 const SlugPage: React.FC<Props> = async ({ params, className }) => {
   const { gender, categorySlug, slug } = await params;
 
-  const product =await prisma.product.findUnique({
+  const product = await prisma.product.findUnique({
     where: {
       slug,
     },
+    include:{
+      sizes: true
+    }
   });
 
-  if(!product){
-    notFound()
+  if (!product) {
+    notFound();
   }
   return (
-    <>
-      <SlugPageBlock
-        gender={gender}
-        categorySlug={categorySlug}
-        slug={slug}
-        product={product}
-      />
-    </>
+    <SlugPageBlock
+      gender={gender}
+      categorySlug={categorySlug}
+      slug={slug}
+      product={product}
+    />
   );
 };
 export default SlugPage;

@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
 export const useAddToCart = () => {
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
   const addToCart = useMutation({
     mutationFn: async ({
       productId,
@@ -15,6 +15,7 @@ export const useAddToCart = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
+      
     },
   });
   return { addToCart };

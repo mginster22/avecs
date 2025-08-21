@@ -31,7 +31,8 @@ export const filters: Filter[] = [
       { label: "Сiрий", color: "gray" },
       { label: "Графіт", color: "graphite" },
       { label: "Блакитний", color: "blue" },
-      { label: "Темно-синій", color: "dark blue" },
+      { label: "Темно-синій", color: "dark blue"},
+      { label: "Бежевий", color: "bewevuy"},
     ],
   },
   {

@@ -1,6 +1,5 @@
 // app/[gender]/[categorySlug]/layout.tsx
 import { Metadata } from "next";
-import Link from "next/link";
 import { products } from "@/constants/products";
 
 interface LayoutProps {
@@ -24,7 +23,7 @@ export async function generateMetadata({
       ? `${gender === "men" ? "Чоловіча колекція" : "Жіноча колекція"}`
       : "Категорія",
     description: `Асортимент ${categoryGender?.title || ""} для ${
-     gender === "men" ? "чоловіків" : "жінок"
+      gender === "men" ? "чоловіків" : "жінок"
     } від бренду Avecs`,
   };
 }
@@ -32,11 +31,5 @@ export async function generateMetadata({
 export default async function GenderLayout({ children, params }: LayoutProps) {
   const { gender } = await params;
 
-  return (
-    <div className="">
-      
-
-      <section>{children}</section>
-    </div>
-  );
+  return <div >{children}</div>;
 }

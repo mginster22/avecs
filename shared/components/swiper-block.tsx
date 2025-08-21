@@ -16,6 +16,7 @@ interface Props {
   isProductImgs?: boolean;
   swiperRef?: React.RefObject<any>;
   activeSlide?: number;
+  isAdaptive?: boolean;
   setActiveSlide?: React.Dispatch<React.SetStateAction<number>>;
   goToSlide?: (index: number) => void;
 }
@@ -26,6 +27,7 @@ export const SwiperBlock: React.FC<Props> = ({
   isProductImgs = false,
   className,
   swiperRef,
+  isAdaptive,
   activeSlide,
   setActiveSlide,
   goToSlide,
@@ -38,6 +40,32 @@ export const SwiperBlock: React.FC<Props> = ({
       modules={[Navigation]}
       spaceBetween={10}
       slidesPerView={isProductImgs ? 2.1 : 3.1}
+      breakpoints={{
+        0: {
+          slidesPerView: isProductImgs ? 1.2 : 2,
+        },
+        480: {
+          slidesPerView: isProductImgs ? 1.2 : 2,
+        },
+        768: {
+          slidesPerView: isProductImgs ? 2.1 : 3.1,
+        },
+        1024: {
+          slidesPerView: isProductImgs ? 2.1 : 3.1,
+        },
+        1280: {
+          slidesPerView: isProductImgs ? 2.1 : 3.1,
+        },
+        1440: {
+          slidesPerView: isProductImgs ? 2.1 : 3.1,
+        },
+        1600: {
+          slidesPerView: isProductImgs ? 2.1 : 3.1,
+        },
+        1824: {
+          slidesPerView: isProductImgs ? 2.1 : 3.1,
+        },
+      }}
       className="max-h-[800px] relative"
       navigation={{
         nextEl: ".custom-next",

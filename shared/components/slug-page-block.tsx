@@ -47,7 +47,6 @@ export const SlugPageBlock: React.FC<Props> = ({
       swiperRef.current.slideTo(index);
     }
   };
-  console.log(product);
   const handlAddToCart = (productId: string) => {
     if (!activeSize) {
       showAddToCart({}); // передаём пустое сообщение, значит ошибка выбора размера
@@ -62,9 +61,9 @@ export const SlugPageBlock: React.FC<Props> = ({
   };
 
   return (
-    <div className={className}>
+    <div className="px-4">
       {/* Навигация */}
-      <nav className="mb-4 text-sm text-gray-600 px-4 flex items-center">
+      <nav className="mb-4 text-sm mt-4 text-gray-600  flex items-center max-lg:flex-wrap">
         <Link href="/">
           <House size={16} />
         </Link>
@@ -83,24 +82,46 @@ export const SlugPageBlock: React.FC<Props> = ({
         </Link>
       </nav>
 
-      <div className="flex gap-4 px-4">
+      <div className="flex  gap-4  max-lg:flex-col">
         {/* Левый блок Картинка */}
-        <div className="w-[65%]">
-          <SwiperBlock
-            productsImg={product.img}
-            isProductImgs={true}
-            swiperRef={swiperRef}
-            activeSlide={activeSlide}
-            setActiveSlide={setActiveSlide}
-            goToSlide={goToSlide}
-          />
+        <div className="w-[65%] flex flex-col gap-4  max-lg:w-full">
+          <div className="">
+            <SwiperBlock
+              productsImg={product.img}
+              isProductImgs={true}
+              swiperRef={swiperRef}
+              activeSlide={activeSlide}
+              setActiveSlide={setActiveSlide}
+              goToSlide={goToSlide}
+            />
+          </div>
+          <div className="flex gap-4 ">
+            {product.img.map((img, i) => (
+              <div
+                className={cn(
+                  "p-2 border-1 cursor-pointer",
+                  i === activeSlide && "border-chart-1"
+                )}
+                key={i}
+                onClick={() => goToSlide(i)} // Меняем слайд при клике
+              >
+                <Image
+                  src={img}
+                  alt={product.title}
+                  width={1900}
+                  height={1900}
+                  className="h-auto w-20 object-cover"
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Правый блок */}
-        <div className="flex flex-col justify-between gap-4">
+        <div className="flex flex-col justify-between gap-4 flex-1">
           <div className="flex items-start justify-between">
-            <p className="text-[34px] font-bold w-[86%] uppercase leading-tight">
-              {product.title} - {product.model} - {product.color}
+            <p className="text-[34px] font-bold w-[86%] uppercase leading-tight max-lg:text-[20px]">
+              {product.title} - {product.model} - {product.colorLabel}
             </p>
             <span className="bg-chart-1 rounded-md p-2 mt-4">
               <Heart size={24} color="white" />
@@ -122,7 +143,7 @@ export const SlugPageBlock: React.FC<Props> = ({
           </div>
           {/* sizes */}
           <div className="flex items-center gap-2">
-            {product.sizes.map((size, i) => (
+            {product.sizes?.map(({size}, i) => (
               <button
                 className={cn(
                   "px-3 py-[2px] border-1 transition-all hover:bg-chart-1 hover:text-white cursor-pointer",
@@ -159,48 +180,31 @@ export const SlugPageBlock: React.FC<Props> = ({
               Оплата частинами
             </Button>
           </div>
-          <h3>Доставка, оплата та обмін</h3>
-          <p>
+          <h3 className="max-lg:text-sm font-bold">Доставка, оплата та обмін</h3>
+          <p className="max-lg:text-sm">
             Безкоштовна доставка територією України при замовленні на суму від
             2000 грн.
           </p>
-          <p>
+          <p className="max-lg:text-sm">
             Обов'язкова передоплата у розмірі 200 грн. Ця сума буде врахована в
             кінцевому розрахунку.
           </p>
-          <p>
+          <p className="max-lg:text-sm">
             <span className="font-bold">Безоплатний</span> обмін розміру.
           </p>
         </div>
       </div>
 
       {/* Мини-картинки снизу */}
-      <div className="flex gap-4  px-4">
-        {product.img.map((img, i) => (
-          <div
-            className={cn(
-              "p-2 border-1 cursor-pointer",
-              i === activeSlide && "border-chart-1"
-            )}
-            key={i}
-            onClick={() => goToSlide(i)} // Меняем слайд при клике
-          >
-            <Image
-              src={img}
-              alt={product.title}
-              width={100}
-              height={100}
-              className="h-auto w-20 object-cover"
-            />
-          </div>
-        ))}
-      </div>
 
       {/* charachteristic-block */}
       <CharachteristikProductBlock
         description={product.description}
         peculiarities={product.peculiarities}
         composition={product.composition}
+        color={product.colorLabel}
+        season={product.season}
+        gender={product.gender}
       />
     </div>
   );

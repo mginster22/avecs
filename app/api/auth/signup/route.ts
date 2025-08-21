@@ -3,7 +3,7 @@ import { hash } from "bcryptjs";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  const { firstName, lastName, email, password } = await request.json();
+  const { firstName, lastName, email, password,phone } = await request.json();
 
   if (!email || !password) {
     return NextResponse.json(
@@ -30,6 +30,7 @@ export async function POST(request: Request) {
       password:hashedPassword,
       firstName,
       lastName,
+      phone
     },
   });
   return NextResponse.json(user);

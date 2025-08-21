@@ -1,5 +1,9 @@
 /* Сделать динамический роутинг по /product/[model]/[variantSubModel]
 При переходе брать model и variantSubModel из URL и показывать нужный вариант. */
+export interface ProductSize {
+  size: string; // например "S"
+  quantity: number; // сколько штук осталось
+}
 export interface Product {
   category: string;
   categorySlug: string;
@@ -8,7 +12,7 @@ export interface Product {
   model: string;
   slug: string;
   price: number;
-  sizes: string[];
+  sizes: ProductSize[];
   color: string;
   colorLabel: string;
   img: string[];
@@ -28,7 +32,6 @@ export const products: Product[] = [
     gender: "men",
 
     composition: ["Нейлон 69%  ", "Поліестер 18%", "Спандекс 13%"],
-
     peculiarities: [
       "Технологія 'Soft touch'",
       "Властивості тканини 'Breathable'",
@@ -41,7 +44,13 @@ export const products: Product[] = [
     model: "50518/23",
     slug: "men-kofta-hudi-50518-23",
     price: 2368,
-    sizes: ["XL"],
+    sizes: [
+      { size: "S", quantity: 10 },
+      { size: "M", quantity: 10 },
+      { size: "L", quantity: 10 },
+      { size: "XL", quantity: 30 },
+      { size: "XXL", quantity: 30 },
+    ],
     colorLabel: "Темно-синя",
     color: "dark blue",
     img: [
@@ -72,7 +81,13 @@ export const products: Product[] = [
     gender: "men",
     slug: "men-kofta-hudi-50518-1",
     price: 2368,
-    sizes: ["L", "XL", "XXL"],
+    sizes: [
+      { size: "S", quantity: 10 },
+      { size: "M", quantity: 10 },
+      { size: "L", quantity: 10 },
+      { size: "XL", quantity: 30 },
+      { size: "XXL", quantity: 30 },
+    ],
     color: "black",
     colorLabel: "Чорне",
     img: [
@@ -103,7 +118,13 @@ export const products: Product[] = [
     model: "50323/64",
     slug: "men-kofta-hudi-50323-64",
     price: 2368,
-    sizes: ["S"],
+    sizes: [
+      { size: "S", quantity: 10 },
+      { size: "M", quantity: 10 },
+      { size: "L", quantity: 10 },
+      { size: "XL", quantity: 30 },
+      { size: "XXL", quantity: 30 },
+    ],
     color: "blue",
     colorLabel: "Cиня",
     img: [
@@ -133,7 +154,13 @@ export const products: Product[] = [
     model: "50323/17",
     slug: "men-kofta-hudi-50323-17",
     price: 2368,
-    sizes: ["XXL"],
+    sizes: [
+      { size: "S", quantity: 10 },
+      { size: "M", quantity: 10 },
+      { size: "L", quantity: 10 },
+      { size: "XL", quantity: 30 },
+      { size: "XXL", quantity: 30 },
+    ],
     color: "graphite",
     colorLabel: "Темно-сіра",
     img: [
@@ -162,7 +189,13 @@ export const products: Product[] = [
     model: "50323/1",
     slug: "men-kofta-hudi-50323-1",
     price: 2368,
-    sizes: ["S", "M"],
+    sizes: [
+      { size: "S", quantity: 10 },
+      { size: "M", quantity: 10 },
+      { size: "L", quantity: 10 },
+      { size: "XL", quantity: 30 },
+      { size: "XXL", quantity: 30 },
+    ],
     color: "black",
     colorLabel: "Чорна",
     img: [
@@ -191,7 +224,13 @@ export const products: Product[] = [
     model: "50499/1",
     slug: "men-tracksuit-50499-1",
     price: 4756,
-    sizes: ["XL", "XXL"],
+    sizes: [
+      { size: "S", quantity: 10 },
+      { size: "M", quantity: 10 },
+      { size: "L", quantity: 10 },
+      { size: "XL", quantity: 30 },
+      { size: "XXL", quantity: 30 },
+    ],
     color: "black",
     colorLabel: "Чорний",
     img: [
@@ -221,7 +260,13 @@ export const products: Product[] = [
     model: "50512/94",
     slug: "men-tracksuit-50512-94",
     price: 4756,
-    sizes: ["L"],
+    sizes: [
+      { size: "S", quantity: 10 },
+      { size: "M", quantity: 10 },
+      { size: "L", quantity: 10 },
+      { size: "XL", quantity: 30 },
+      { size: "XXL", quantity: 30 },
+    ],
     color: "gray",
     colorLabel: "Сірий",
     img: [
@@ -247,16 +292,47 @@ export const products: Product[] = [
       "Чоловіча футболка AVECS - це симбіоз високих технологій і комфорту, ідеально підходить для спортивних та повсякденних образів. Технологія 'Soft Touch', забезпечує неперевершений комфорт, завдяки м'якій та приємній на дотик тканині. Технологія 'Breathable' надасть чудову 'дихаючість', Ви забудете про почуття дискомфорту через вологу або спекотну погоду. Виріб пропускає повітря та вологу, дозволяючи Вашій шкірі дихати, що робить її ідеальною як для спортивних занять, так і для повсякденного використання. Технологія 'Sweat Wiking' - це просочення тканини спеціальними розчинами, які гарантують відведення поту з тіла ще до того, як він поглинеться тканиною. Обираючи футболку AVECS, Ви обираєте не просто одяг, а новий рівень комфорту. ",
     gender: "women",
     title: "Спортивний костюм AVECS",
-    model: "50512/92",
-    slug: "women-tracksuit-50512-93",
+    model: "50472/7/",
+    slug: "women-tracksuit-50472-7",
     price: 4756,
-    sizes: ["L"],
-    color: "gray",
-    colorLabel: "Сірий",
+    sizes: [
+      { size: "S", quantity: 10 },
+      { size: "M", quantity: 10 },
+      { size: "L", quantity: 10 },
+      { size: "XL", quantity: 30 },
+      { size: "XXL", quantity: 30 },
+    ],
+    color: "bewevuy",
+    colorLabel: "Бежевий",
     img: [
-      "/tracksuit/model(50512)/1.webp",
-      "/tracksuit/model(50512)/2.webp",
-      "/tracksuit/model(50512)/3.webp",
+      "/tracksuit/model(50472-7)/1.webp",
+      "/tracksuit/model(50472-7)/2.webp",
+      "/tracksuit/model(50472-7)/3.webp",
+      "/tracksuit/model(50472-7)/4.webp",
+      "/tracksuit/model(50472-7)/5.webp",
+      "/tracksuit/model(50472-7)/6.webp",
+      "/tracksuit/model(50472-7)/7.webp",
     ],
   },
+  {
+    gender: "men",
+    category: "Футболки",
+    categorySlug: "futbolki",
+    title: "Футболка 30498-17",
+    season: "Літо",
+    model: "30498-17",
+    slug: "men-futbolki-30498-17",
+    price: 1174,
+    color: "gray",
+    colorLabel: "Сіра",
+    composition: ["Нейлон 69%", "Поліестер 18%", "Спандекс 13%"],
+    peculiarities: ["Soft touch", "Breathable", "Sweat Wiking"],
+    description: "Чоловіча футболка AVECS ...",
+    img: ["/sweater/model(50518)/1.webp", "/sweater/model(50518)/2.webp"],
+    sizes: [
+      { size: "S", quantity: 10 },
+      { size: "M", quantity: 5 },
+    ],
+  },
+  
 ];

@@ -13,13 +13,13 @@ export const MainImageBlock: React.FC<Props> = ({
   className,
 }) => {
   return (
-    <div className={cn("", className)}>
       <div className="relative flex justify-center">
-        <img src={image} alt="image" />
-        <p className="absolute top-30 text-center text-white font-bold text-[59px] w-[90%] ">
+        <img src={image} alt="image" className="object-cover max-lg:h-[300px] object-[80%] "/>
+        <p className="absolute top-30 text-center text-white font-bold text-[59px] w-[90%] 
+        max-lg:text-[40px] max-lg:top-20
+        ">
           {text}
         </p>
       </div>
-    </div>
   );
 };
