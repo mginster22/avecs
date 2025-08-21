@@ -157,11 +157,16 @@ export async function POST(req: Request): Promise<NextResponse> {
       liqpay: PaymentType.CARD,
       byDetails: PaymentType.CARD,
     };
+    const lastOrder = await prisma.order.findFirst({
+      orderBy: { orderNumber: "desc" },
+    });
 
+    const orderNumber = (lastOrder?.orderNumber ?? 0) + 1;
     const createdOrder = await prismaTx.order.create({
       data: {
         userId,
         guestId,
+        orderNumber,
         email: orderData.email,
         phone: orderData.phone,
         region: orderData.region,
@@ -188,7 +193,7 @@ export async function POST(req: Request): Promise<NextResponse> {
 
   if (orderData.payment === "liqpay") {
     const { data, signature } = generateLiqPayForm(
-      newOrder.id,
+      newOrder.orderNumber.toString(),
       newOrder.total,
       "Оплата замовлення"
     );

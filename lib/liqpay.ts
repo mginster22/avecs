@@ -5,7 +5,7 @@ const LIQPAY_PUBLIC_KEY = process.env.LIQPAY_PUBLIC_KEY!;
 const LIQPAY_PRIVATE_KEY = process.env.LIQPAY_PRIVATE_KEY!;
 
 export function generateLiqPayForm(
-  orderId: string,
+  orderNumber: string,
   amount: number,
   description: string
 ) {
@@ -16,8 +16,8 @@ export function generateLiqPayForm(
     amount,
     currency: "UAH",
     description,
-    order_id: orderId,
-    result_url: `http://localhost:3000/success?id=${orderId}`,
+    order_id: orderNumber,
+    result_url: `http://localhost:3000/success?orderNumber=${orderNumber}`,
     server_url: `https://2f126c028160.ngrok-free.app/api/liqpay/callback`,
   };
 

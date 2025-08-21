@@ -20,11 +20,10 @@ export async function POST(req: Request) {
   }
 
   const decoded = JSON.parse(Buffer.from(data, "base64").toString("utf8"));
-  console.log(decoded)
 
   if (decoded.status === "success" || decoded.status === "sandbox") {
     await prisma.order.update({
-      where: { id: decoded.order_id },
+      where: { orderNumber: Number(decoded.order_id) },
       data: {
         status: "PAID",
         isPaid: true,

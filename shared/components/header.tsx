@@ -60,6 +60,7 @@ export const Header: React.FC<Props> = ({ className }) => {
     },
   });
   const [active, setActive] = useState(false);
+
   return (
     <div
       className={cn(
@@ -67,7 +68,7 @@ export const Header: React.FC<Props> = ({ className }) => {
       )}
     >
       {active && <BurgerMenu active={active} setActive={setActive} />}
-
+      <button onClick={() => deleteOrder.mutate()}>DELETE</button>
       <ModalAddToCart />
       <div className="flex items-center gap-20">
         <Link href="/">
