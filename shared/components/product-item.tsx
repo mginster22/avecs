@@ -37,6 +37,7 @@ export const ProductItem: React.FC<Props> = ({
 
   // Запрос query на доавлние в корзину
   const { addToCart } = useAddToCart();
+
   const { deleteCartItem } = useDeleteCartItem();
   //Под корзиной будет показываться модалка modal-add-to-cart
   const { showAddToCart } = useCartStore();
@@ -51,7 +52,7 @@ export const ProductItem: React.FC<Props> = ({
     }
     showAddToCart({
       title: product.title,
-      color: product.color,
+      color: product.colorLabel,
       size: activeSize,
     });
     addToCart.mutate({ productId, size: activeSize });

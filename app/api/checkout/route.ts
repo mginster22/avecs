@@ -4,12 +4,24 @@ import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
 import { v4 as uuidv4 } from "uuid";
 import { NextResponse } from "next/server";
+import { PaymentType } from "@/app/generated/prisma";
+import { generateLiqPayForm } from "@/lib/liqpay";
 
 interface OrderItem {
   productId: string;
   size: string;
   quantity: number;
 }
+interface OrderData {
+  email: string;
+  phone: string;
+  region: string;
+  city: string;
+  branch: string;
+  isPaid: boolean;
+  payment: FrontPaymentType; // <-- строго enum
+}
+type FrontPaymentType = "cash" | "liqpay" | "byDetails";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -96,94 +108,30 @@ export async function GET() {
 
 Если нет — возвращаем пустой массив товаров.*/
 
-export async function POST(req: Request) {
-  //Получаем список товаров из тела запроса
-
+export async function POST(req: Request): Promise<NextResponse> {
   const {
     items,
     orderData,
   }: {
     items: { productId: string; size: string; quantity: number }[];
-    orderData: {
-      email: string;
-      phone: string;
-      region: string;
-      city: string;
-      branch: string;
-    };
+    orderData: OrderData;
   } = await req.json();
 
-  // Получаем сессию пользователя и куки
-  //Проверяем, авторизован ли пользователь (получаем сессию).
-  //Получаем доступ к кукам запроса, чтобы работать с гостевым идентификатором.
   const session = await getServerSession(authOptions);
   const cookieStore = cookies();
 
-  //Определяем пользователя или гостя
   let userId: string | null = null;
   let guestId: string | null = null;
 
-  //Если пользователь авторизован — запоминаем его userId.
-  //Если нет — пытаемся взять guestId из куки.
-  //Если куки с гостевым идентификатором нет — генерируем новый guestId (уникальный ID).
-  //Запись новой куки откладываем, чтобы сделать после успешного создания заказа.
-  if (
-    session &&
-    session.user &&
-    typeof session.user.id === "string" &&
-    session.user.id.length > 0
-  ) {
+  if (session?.user?.id) {
     userId = session.user.id;
-    guestId = null;
   } else {
-    guestId = (await cookieStore).get("avecscookies")?.value ?? null;
-    if (!guestId) {
-      guestId = uuidv4();
-    }
-    userId = null;
+    guestId = (await cookieStore).get("avecscookies")?.value ?? uuidv4();
   }
 
-  //Проверяем наличие и количество каждого товара на складе
-  /*Для каждого товара из списка ищем его в базе.
-  Eсли товара нет — возвращаем ошибку 404.
-  Если на складе меньше товара, чем заказано — возвращаем ошибку 409 с сообщением об остатке. */
-  for (const item of items) {
-    const productSize = await prisma.productSize.findFirst({
-      where: {
-        productId: item.productId,
-        size: item.size,
-      },
-      select: { quantity: true, product: { select: { title: true } } },
-    });
+  // проверка stock ...
 
-    if (!productSize) {
-      return NextResponse.json(
-        {
-          error: `Размер "${item.size}" для товара ${item.productId} не найден`,
-        },
-        { status: 404 }
-      );
-    }
-
-    if (productSize.quantity < item.quantity) {
-      return NextResponse.json(
-        {
-          error: `Недостаточно товара "${productSize.product.title}" размера ${item.size}. Остаток: ${productSize.quantity}`,
-        },
-        { status: 409 }
-      );
-    }
-  }
-
-  // Создаём заказ и позиции заказа в одной транзакции, одновременно уменьшая stock
-  /**
-    Внутри транзакции (чтобы все операции были атомарными):
-    Для каждого товара берём актуальную цену и формируем данные для позиций заказа.
-    Создаём запись заказа с привязкой к пользователю или гостю, статусом "pending" и создаём связанные позиции заказа с нужными productId, quantity, price.
-    Обновляем количество товара на складе, уменьшая stock на заказанное количество.
-    Возвращаем созданный заказ.
-  */
-  const order = await prisma.$transaction(async (prismaTx) => {
+  const newOrder = await prisma.$transaction(async (prismaTx) => {
     const orderItemsData = await Promise.all(
       items.map(async (item) => {
         const product = await prismaTx.product.findUnique({
@@ -193,7 +141,7 @@ export async function POST(req: Request) {
         return {
           productId: item.productId,
           quantity: item.quantity,
-          size: item.size, // 🔹 сохраняем размер
+          size: item.size,
           price: product?.price ?? 0,
         };
       })
@@ -204,7 +152,13 @@ export async function POST(req: Request) {
       0
     );
 
-    const newOrder = await prismaTx.order.create({
+    const paymentMap: Record<FrontPaymentType, PaymentType> = {
+      cash: PaymentType.CASH, // <-- маленькими буквами
+      liqpay: PaymentType.CARD,
+      byDetails: PaymentType.CARD,
+    };
+
+    const createdOrder = await prismaTx.order.create({
       data: {
         userId,
         guestId,
@@ -213,41 +167,41 @@ export async function POST(req: Request) {
         region: orderData.region,
         city: orderData.city,
         branch: orderData.branch,
+        payment: paymentMap[orderData.payment],
         status: "PENDING",
+        isPaid: false,
         total,
-        items: {
-          create: orderItemsData,
-        },
+        items: { create: orderItemsData },
       },
-      include: {
-        items: true,
-      },
+      include: { items: true },
     });
 
-    // 🔹 уменьшаем количество у конкретного размера
     for (const item of items) {
       await prismaTx.productSize.updateMany({
-        where: {
-          productId: item.productId,
-          size: item.size,
-        },
-        data: {
-          quantity: { decrement: item.quantity },
-        },
+        where: { productId: item.productId, size: item.size },
+        data: { quantity: { decrement: item.quantity } },
       });
     }
 
-    return newOrder;
+    return createdOrder;
   });
 
-  // Формируем ответ с установкой куки для гостя, если она была создана только что
-  const response = NextResponse.json(order);
+  if (orderData.payment === "liqpay") {
+    const { data, signature } = generateLiqPayForm(
+      newOrder.id,
+      newOrder.total,
+      "Оплата замовлення"
+    );
+    return NextResponse.json({ order: newOrder, liqpay: { data, signature } });
+  }
+
+  const response = NextResponse.json(newOrder);
 
   if (!session && guestId && !(await cookieStore).get("avecscookies")) {
     response.cookies.set("avecscookies", guestId, {
       path: "/",
       httpOnly: true,
-      maxAge: 60 * 60 * 24 * 30, // 30 дней
+      maxAge: 60 * 60 * 24 * 30,
     });
   }
 

@@ -1,5 +1,5 @@
 "use client";
-import { CheckoutForm } from "@/shared/components/forms/checkout/checkout-form";
+import { CheckoutForm } from "@/shared/forms/checkout/checkout-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 

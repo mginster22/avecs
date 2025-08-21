@@ -15,7 +15,6 @@ import { ModalSuccess } from "./modal-succes";
 import { CartItem } from "@/types/product";
 import { Button } from "@/shared/ui/button";
 import { useDeleteCart } from "@/shared/hooks/useDeleteCart";
-import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   className?: string;
@@ -31,6 +30,7 @@ export const DeliveryCheckoutBlock: React.FC<Props> = ({ data, className }) => {
   const [cityInput, setCityInput] = useState("");
   const [branchInput, setBranchInput] = useState("");
 
+  const [paymentMethod, setPaymentMethod] = useState("cash");
   React.useEffect(() => {
     if (session?.user) {
       setEmail(session.user.email || "");
@@ -50,11 +50,34 @@ export const DeliveryCheckoutBlock: React.FC<Props> = ({ data, className }) => {
           region: regionInput,
           city: cityInput,
           branch: branchInput,
+          payment: paymentMethod,
         },
       },
       {
-        onSuccess: () => {
-          setIsModalOpen(true);
+        onSuccess: (res: any) => {
+          if (res.liqpay) {
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = "https://www.liqpay.ua/api/3/checkout";
+
+            const inputData = document.createElement("input");
+            inputData.type = "hidden";
+            inputData.name = "data";
+            inputData.value = res.liqpay.data;
+            form.appendChild(inputData);
+
+            const inputSignature = document.createElement("input");
+            inputSignature.type = "hidden";
+            inputSignature.name = "signature";
+            inputSignature.value = res.liqpay.signature;
+            form.appendChild(inputSignature);
+
+            document.body.appendChild(form);
+            form.submit();
+          } else {
+            // Если не LiqPay — открываем модалку
+            setIsModalOpen(true);
+          }
         },
       }
     );
@@ -86,6 +109,7 @@ export const DeliveryCheckoutBlock: React.FC<Props> = ({ data, className }) => {
         defaultValue="item-1"
         className="max-lg:mt-4"
       >
+        {/* контактные данные */}
         <AccordionItem value="item-1">
           <AccordionTrigger>
             <p>1. Контактнi даннi</p>
@@ -111,16 +135,22 @@ export const DeliveryCheckoutBlock: React.FC<Props> = ({ data, className }) => {
             </form>
           </AccordionContent>
         </AccordionItem>
+
+        {/* выбор адреса доставки */}
         <AccordionItem
           value="item-2"
-          className={cn("flex flex-col gap-4 mt-4 h-auto ",)}
+          className={cn("flex flex-col gap-4 mt-4 h-auto ")}
         >
           <AccordionTrigger>
             <p>2. Доставка</p>
           </AccordionTrigger>
           <AccordionContent className="h-full">
             <div className="flex items-center gap-2 max-lg:mt-2">
-              <img src="/novaposhta.svg" alt="novaposhta" className="w-10 max-lg:w-6" />
+              <img
+                src="/novaposhta.svg"
+                alt="novaposhta"
+                className="w-10 max-lg:w-6"
+              />
               <p className="underline max-lg:text-xs">
                 Доставка лише у відділення та поштомати Нової Пошти
               </p>
@@ -135,6 +165,61 @@ export const DeliveryCheckoutBlock: React.FC<Props> = ({ data, className }) => {
                 setBranchInput={setBranchInput}
               />
             </form>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* выбор оплаты */}
+        <AccordionItem value="item-3" className="mt-4">
+          <AccordionTrigger>
+            <p>3. Спосіб оплати</p>
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="flex flex-col gap-4">
+              <label
+                htmlFor="cash"
+                className="flex items-center gap-2 border-1 border-gray-300 p-2"
+              >
+                <input
+                  type="radio"
+                  id="cash"
+                  name="payment"
+                  value="cash"
+                  checked={paymentMethod === "cash"}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                />
+                <span>Оплата при доставці</span>
+              </label>
+
+              <label
+                htmlFor="byDetails"
+                className="flex items-center gap-2 border-1 border-gray-300 p-2"
+              >
+                <input
+                  type="radio"
+                  id="byDetails"
+                  name="payment"
+                  value="byDetails"
+                  checked={paymentMethod === "byDetails"}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                />
+                <span>Банківський переказ за реквізитами</span>
+              </label>
+
+              <label
+                htmlFor="liqpay"
+                className="flex items-center gap-2 border-1 border-gray-300 p-2"
+              >
+                <input
+                  type="radio"
+                  id="liqpay"
+                  name="payment"
+                  value="liqpay"
+                  checked={paymentMethod === "liqpay"}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                />
+                <span>Оплата через LiqPay (Visa/Master/Privat/ApplePay)</span>
+              </label>
+            </div>
           </AccordionContent>
         </AccordionItem>
       </Accordion>

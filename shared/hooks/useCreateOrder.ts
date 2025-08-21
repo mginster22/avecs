@@ -14,6 +14,7 @@ interface OrderData {
   region: string;
   city: string;
   branch: string;
+  payment: string;
 }
 interface CreateOrderPayload {
   items: OrderItem[];

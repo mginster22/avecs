@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { ProductItem } from "@/shared/components";
 import {
   Accordion,
   AccordionContent,
@@ -7,7 +8,6 @@ import {
 } from "@/shared/ui/accordion";
 import { CartItem } from "@/types/product";
 import React from "react";
-import { ProductItem } from "../../product-item";
 
 interface Props {
   className?: string;

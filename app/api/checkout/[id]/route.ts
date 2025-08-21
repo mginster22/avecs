@@ -8,6 +8,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   const session = await getServerSession(authOptions);
+  const { id } = await params;
 
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -15,7 +16,7 @@ export async function GET(
 
   const order = await prisma.order.findFirst({
     where: {
-      id: params.id,
+      id,
       userId: session.user.id, // чтобы чужие заказы не достать
     },
     include: {
