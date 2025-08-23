@@ -99,6 +99,7 @@ model Order {
 
   orderNumber Int @unique
 
+
   userId  String?
   guestId String?
 

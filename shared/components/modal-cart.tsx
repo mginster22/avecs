@@ -75,7 +75,7 @@ export const ModalCart: React.FC<Props> = ({ className }) => {
         )}
 
         {/* Items list */}
-        <div className="flex-1 px-4 overflow-y-auto mt-4 flex flex-col gap-4">
+        <div className="flex-1 px-4 overflow-y-auto mt-4 flex flex-col gap-10">
           {data.length > 0 ? (
             data
               .sort(

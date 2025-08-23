@@ -3,22 +3,19 @@ import { authOptions } from "../../auth/[...nextauth]/route";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-
-
 export async function GET(
   req: Request,
-  { params }: { params: { orderNumber: number } }
+  { params }: { params: { id: string } }
 ) {
   const session = await getServerSession(authOptions);
-  const { orderNumber } = await params;
+  const { id } = await params;
 
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
   const order = await prisma.order.findFirst({
     where: {
-      orderNumber,
+      id,
       userId: session.user.id, // чтобы чужие заказы не достать
     },
     include: {
