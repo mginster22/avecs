@@ -11,8 +11,8 @@ export default async function Home() {
     <div className="">
       <BannerBlock />
       <div className="grid grid-cols-2 gap-4 px-4 mt-10 max-lg:grid-cols-1">
-        <InfoCartBlock link="/men" className="flex-1/2" img="/men.jpg" title="ЧОЛОВІКАМ" isClassName/>
-        <InfoCartBlock link="/women" className="flex-1/2" img="/women.jpg" title="ЖІНКАМ" isClassName/>
+        <InfoCartBlock link="/men" className="flex-1/2" img="/assets/men.jpg" title="ЧОЛОВІКАМ" isClassName/>
+        <InfoCartBlock link="/women" className="flex-1/2" img="/assets/women.jpg" title="ЖІНКАМ" isClassName/>
       </div>
       <NewCollectionBlock products={products}/>
       

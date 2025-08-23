@@ -108,40 +108,108 @@ export async function GET() {
 
 Если нет — возвращаем пустой массив товаров.*/
 
-export async function POST(req: Request): Promise<NextResponse> {
-  const {
-    items,
-    orderData,
-  }: {
-    items: { productId: string; size: string; quantity: number }[];
-    orderData: OrderData;
-  } = await req.json();
+interface OrderItem {
+  productId: string;
+  quantity: number;
+  size: string;
+}
+
+interface OrderData {
+  email: string;
+  phone: string;
+  region: string;
+  city: string;
+  branch: string;
+  payment: "cash" | "liqpay" | "byDetails";
+}
+
+export async function POST(req: Request) {
+  const { items, orderData }: { items: OrderItem[]; orderData: OrderData } =
+    await req.json();
 
   const session = await getServerSession(authOptions);
   const cookieStore = cookies();
 
-  let userId: string | null = null;
+  let userId: string | null = session?.user?.id ?? null;
   let guestId: string | null = null;
 
-  if (session?.user?.id) {
-    userId = session.user.id;
-  } else {
+  if (!userId) {
     guestId = (await cookieStore).get("avecscookies")?.value ?? uuidv4();
   }
 
-  // проверка stock ...
+  // Определяем, создаём ли заказ сразу
+  const isImmediate =
+    orderData.payment === "cash" || orderData.payment === "byDetails";
 
-  const newOrder = await prisma.$transaction(async (prismaTx) => {
+  if (isImmediate) {
+    // Создаём заказ сразу
+    const newOrder = await prisma.$transaction(async (tx) => {
+      // Получаем товары с ценой
+      const orderItemsData = await Promise.all(
+        items.map(async (item) => {
+          const product = await tx.product.findUnique({
+            where: { id: item.productId },
+          });
+          return {
+            productId: item.productId,
+            size: item.size,
+            quantity: item.quantity,
+            price: product?.price ?? 0,
+          };
+        })
+      );
+
+      const total = orderItemsData.reduce(
+        (acc, item) => acc + item.price * item.quantity,
+        0
+      );
+
+      const lastOrder = await tx.order.findFirst({
+        orderBy: { orderNumber: "desc" },
+      });
+      const orderNumber = (lastOrder?.orderNumber ?? 0) + 1;
+
+      return tx.order.create({
+        data: {
+          userId,
+          guestId,
+          orderNumber,
+          email: orderData.email,
+          phone: orderData.phone,
+          region: orderData.region,
+          city: orderData.city,
+          branch: orderData.branch,
+          payment:
+            orderData.payment === "cash" ? PaymentType.CASH : PaymentType.CARD,
+          status: "PENDING",
+          isPaid: false,
+          total,
+          items: { create: orderItemsData },
+        },
+        include: { items: true },
+      });
+    });
+
+    const response = NextResponse.json(newOrder);
+
+    if (!userId && guestId && !(await cookieStore).get("avecscookies")) {
+      response.cookies.set("avecscookies", guestId, {
+        path: "/",
+        httpOnly: true,
+        maxAge: 60 * 60 * 24 * 30,
+      });
+    }
+
+    return response;
+  } else {
+    // LiqPay — считаем total на сервере, заказ создаётся в callback
     const orderItemsData = await Promise.all(
       items.map(async (item) => {
-        const product = await prismaTx.product.findUnique({
+        const product = await prisma.product.findUnique({
           where: { id: item.productId },
         });
-
         return {
-          productId: item.productId,
           quantity: item.quantity,
-          size: item.size,
           price: product?.price ?? 0,
         };
       })
@@ -152,65 +220,23 @@ export async function POST(req: Request): Promise<NextResponse> {
       0
     );
 
-    const paymentMap: Record<FrontPaymentType, PaymentType> = {
-      cash: PaymentType.CASH, // <-- маленькими буквами
-      liqpay: PaymentType.CARD,
-      byDetails: PaymentType.CARD,
-    };
     const lastOrder = await prisma.order.findFirst({
       orderBy: { orderNumber: "desc" },
     });
-
     const orderNumber = (lastOrder?.orderNumber ?? 0) + 1;
-    const createdOrder = await prismaTx.order.create({
-      data: {
-        userId,
-        guestId,
-        orderNumber,
-        email: orderData.email,
-        phone: orderData.phone,
-        region: orderData.region,
-        city: orderData.city,
-        branch: orderData.branch,
-        payment: paymentMap[orderData.payment],
-        status: "PENDING",
-        isPaid: false,
-        total,
-        items: { create: orderItemsData },
-      },
-      include: { items: true },
-    });
 
-    for (const item of items) {
-      await prismaTx.productSize.updateMany({
-        where: { productId: item.productId, size: item.size },
-        data: { quantity: { decrement: item.quantity } },
-      });
-    }
-
-    return createdOrder;
-  });
-
-  if (orderData.payment === "liqpay") {
     const { data, signature } = generateLiqPayForm(
-      newOrder.orderNumber.toString(),
-      newOrder.total,
+      orderNumber.toString(),
+      total,
       "Оплата замовлення"
     );
-    return NextResponse.json({ order: newOrder, liqpay: { data, signature } });
-  }
 
-  const response = NextResponse.json(newOrder);
-
-  if (!session && guestId && !(await cookieStore).get("avecscookies")) {
-    response.cookies.set("avecscookies", guestId, {
-      path: "/",
-      httpOnly: true,
-      maxAge: 60 * 60 * 24 * 30,
+    return NextResponse.json({
+      liqpay: { data, signature },
+      orderNumber,
+      total,
     });
   }
-
-  return response;
 }
 
 export async function DELETE() {

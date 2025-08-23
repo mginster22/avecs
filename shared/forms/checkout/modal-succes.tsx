@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, {  useEffect } from "react";
 import { Button } from "@/shared/ui/button";
 import { CartItem, Product } from "@/types/product";
 

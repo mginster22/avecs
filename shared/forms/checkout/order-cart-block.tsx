@@ -22,15 +22,14 @@ export const OrderCartBlock: React.FC<Props> = ({ items, className }) => {
     );
   };
   return (
-    <div className={cn("w-1/2 max-lg:w-full")}>
+    <div className={cn("w-1/2 max-lg:w-full ")}>
       <Accordion type="single" collapsible defaultValue="item-1">
         <AccordionItem value="item-1">
           <AccordionTrigger>
             <p>Кошик</p>
           </AccordionTrigger>
           <AccordionContent>
-            <p>Всього: {totalPrice()} грн</p>
-            <ul className="flex flex-col gap-4 h-80 overflow-scroll">
+            <ul className="flex flex-col gap-4 h-80 overflow-scroll max-lg:pb-10">
               {items
                 .sort(
                   (a: CartItem, b: CartItem) =>
@@ -48,6 +47,7 @@ export const OrderCartBlock: React.FC<Props> = ({ items, className }) => {
                   />
                 ))}
             </ul>
+            <p className="mt-4 text-xl pb-10">Всього: {totalPrice()} грн</p>
           </AccordionContent>
         </AccordionItem>
       </Accordion>

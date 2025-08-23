@@ -38,8 +38,6 @@ export async function GET() {
   }
 }
 
-//3. Если гость
-
 export async function POST(req: Request) {
   const { productId, quantity = 1, size } = await req.json();
   const session = await getServerSession(authOptions);
@@ -65,6 +63,28 @@ export async function POST(req: Request) {
     }
   }
 
+  // проверка на наличие количества товара и размера
+  const productSize = await prisma.productSize.findFirst({
+    where: {
+      productId,
+      size,
+    },
+  });
+
+  if (!productSize) {
+    return NextResponse.json(
+      { error: "Такого размера у товара нет" },
+      { status: 400 }
+    );
+  }
+
+  if (productSize.quantity < quantity) {
+    return NextResponse.json(
+      { error: "На жаль товар закінчився" },
+      { status: 400 }
+    );
+  }
+
   const existingItem = await prisma.cartItem.findFirst({
     where: {
       cartId: cart.id,
@@ -73,6 +93,13 @@ export async function POST(req: Request) {
     },
   });
   if (existingItem) {
+    const totalRequested = existingItem.quantity + quantity;
+    if (totalRequested > productSize.quantity) {
+      return NextResponse.json(
+        { error: "Немає достатньої кількості цього розміру на складі" },
+        { status: 400 }
+      );
+    }
     const updatedItem = await prisma.cartItem.update({
       where: {
         id: existingItem.id,
@@ -83,15 +110,36 @@ export async function POST(req: Request) {
         },
         size,
       },
+      include: {
+        product: {
+          include: {
+            sizes: true,
+          },
+        },
+      },
     });
+
     return NextResponse.json(updatedItem, { status: 200 });
   } else {
+    if (quantity > productSize.quantity) {
+      return NextResponse.json(
+        { error: "Немає достатньої кількості цього розміру на складі" },
+        { status: 400 }
+      );
+    }
     const newItem = await prisma.cartItem.create({
       data: {
         cartId: cart.id,
         productId,
         size,
         quantity,
+      },
+      include: {
+        product: {
+          include: {
+            sizes: true,
+          },
+        },
       },
     });
     return NextResponse.json(newItem, { status: 200 });

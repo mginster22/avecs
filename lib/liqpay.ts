@@ -18,7 +18,7 @@ export function generateLiqPayForm(
     description,
     order_id: orderNumber,
     result_url: `http://localhost:3000/success?orderNumber=${orderNumber}`,
-    server_url: `https://2f126c028160.ngrok-free.app/api/liqpay/callback`,
+    server_url: `http://localhost:3000/api/liqpay/callback`,
   };
 
   const dataStr = Buffer.from(JSON.stringify(data)).toString("base64");

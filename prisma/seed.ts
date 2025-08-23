@@ -4,59 +4,61 @@ import { products } from "../constants/products";
 const prisma = new PrismaClient();
 
 async function main() {
-  for (const product of products) {
-    await prisma.product.upsert({
-      where: { slug: product.slug },
-      update: {},
-      create: {
-        ...product,
-        gender: product.gender as "men" | "women",
-        img: product.img as string[],
-        peculiarities: product.peculiarities as string[],
-        composition: product.composition as string[],
-        description: product.description as string,
-        sizes: {
-          create: product.sizes.map((s) => ({
-            size: s.size,
-            quantity: s.quantity,
-          })),
-        },
-      },
-    });
-  }
-// await prisma.product.upsert({
-//   where: { slug: "men-futbolki-30498-17" },
-//   update: {},
-//   create: {
-//     gender: "men",
-//     category: "Футболки",
-//     categorySlug: "futbolki",
-//     title: "Футболка 30498-17",
-//     season: "Літо",
-//     model: "30498-17",
-//     slug: "men-futbolki-30498-17",
-//     price: 1174,
-//     color: "gray",
-//     colorLabel: "Сіра",
-//     composition: ["Нейлон 69%", "Поліестер 18%", "Спандекс 13%"],
-//     peculiarities: [
-//       "Soft touch",
-//       "Breathable",
-//       "Sweat Wiking",
-//     ],
-//     description: "Чоловіча футболка AVECS ...",
-//     img: [
-//       "/sweater/model(50518)/1.webp",
-//       "/sweater/model(50518)/2.webp",
-//     ],
-//     sizes: {
-//       create: [
-//         { size: "S", quantity: 10 },
-//         { size: "M", quantity: 5 },
-//       ],
-//     },
-//   },
-// });
+  // for (const product of products) {
+  //   await prisma.product.upsert({
+  //     where: { slug: product.slug },
+  //     update: {},
+  //     create: {
+  //       ...product,
+  //       gender: product.gender as "men" | "women",
+  //       img: product.img as string[],
+  //       peculiarities: product.peculiarities as string[],
+  //       composition: product.composition as string[],
+  //       description: product.description as string,
+  //       sizes: {
+  //         create: product.sizes.map((s) => ({
+  //           size: s.size,
+  //           quantity: s.quantity,
+  //         })),
+  //       },
+  //     },
+  //   });
+  // }
+await prisma.product.upsert({
+  where: { slug: "women-legincu-30570-1" },
+  update: {},
+  create: {
+    gender: "women",
+    category: "Легінси",
+    categorySlug: "legincu",
+    title: "Легінси Avecs темно-сірі з технологією Flat Seams",
+    season: "Демисезон",
+    model: "30570-1",
+    slug: "women-legincu-30570-1",
+    price: 1343,
+    color: "gray",
+    colorLabel: "",
+    composition: ["Нейлон 69%", "Поліестер 18%", "Спандекс 13%"],
+    peculiarities: [
+      "Soft touch",
+      "Breathable",
+      "Sweat Wiking",
+    ],
+    description: "Жіночі легінси AVECS ...",
+    img: [
+      "/legincu/model(30570-17)/1.webp",
+      "/legincu/model(30570-17)/2.webp",
+      "/legincu/model(30570-17)/3.webp",
+    ],
+    sizes: {
+      create: [
+        { size: "M", quantity: 10 },
+        { size: "L", quantity: 5 },
+        { size: "XL", quantity: 5 },
+      ],
+    },
+  },
+});
 
 
   // const users = [

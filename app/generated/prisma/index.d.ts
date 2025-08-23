@@ -10359,6 +10359,7 @@ export namespace Prisma {
 
   export type ProductSizeWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    productId_size?: ProductSizeProductIdSizeCompoundUniqueInput
     AND?: ProductSizeWhereInput | ProductSizeWhereInput[]
     OR?: ProductSizeWhereInput[]
     NOT?: ProductSizeWhereInput | ProductSizeWhereInput[]
@@ -10366,7 +10367,7 @@ export namespace Prisma {
     quantity?: IntFilter<"ProductSize"> | number
     productId?: StringFilter<"ProductSize"> | string
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
-  }, "id">
+  }, "id" | "productId_size">
 
   export type ProductSizeOrderByWithAggregationInput = {
     id?: SortOrder
@@ -11653,6 +11654,11 @@ export namespace Prisma {
   export type ProductScalarRelationFilter = {
     is?: ProductWhereInput
     isNot?: ProductWhereInput
+  }
+
+  export type ProductSizeProductIdSizeCompoundUniqueInput = {
+    productId: string
+    size: string
   }
 
   export type ProductSizeCountOrderByAggregateInput = {

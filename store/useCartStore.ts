@@ -1,10 +1,9 @@
 import { create } from "zustand";
 
-interface AddToCartMessage {
-  title?: string;
-  color?: string;
-  size?: string;
-}
+type AddToCartMessage =
+  | { title: string; color: string; size: string; error?: undefined } // успех
+  | { error: string; title?: undefined; color?: undefined; size?: undefined }; // ошибка
+
 
 interface CartStore {
   isOpen: boolean;

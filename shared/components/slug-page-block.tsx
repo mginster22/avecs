@@ -2,11 +2,8 @@
 import { ChevronRight, Heart, House } from "lucide-react";
 import Link from "next/link";
 import React, { useRef } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
-import { Navigation } from "swiper/modules";
-import { MoveLeft, MoveRight } from "lucide-react";
 import { Product } from "@/types/product";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -15,6 +12,7 @@ import { useAddToCart } from "../hooks/useAddToCart";
 import useCartStore from "@/store/useCartStore";
 import { SwiperBlock } from "./swiper-block";
 import { CharachteristikProductBlock } from "./charachteristik-product-block";
+import { useRouter } from "next/navigation";
 
 interface Props {
   className?: string;
@@ -26,9 +24,7 @@ interface Props {
 
 export const SlugPageBlock: React.FC<Props> = ({
   gender,
-  slug,
   categorySlug,
-  className,
   product,
 }) => {
   const { addToCart } = useAddToCart();
@@ -36,7 +32,7 @@ export const SlugPageBlock: React.FC<Props> = ({
   const [activeSize, setActiveSize] = React.useState<string | undefined>(
     undefined
   );
-
+const router = useRouter();
   const [activeSlide, setActiveSlide] = React.useState(0);
 
   // Добавим реф для Swiper
@@ -49,14 +45,13 @@ export const SlugPageBlock: React.FC<Props> = ({
   };
   const handlAddToCart = (productId: string) => {
     if (!activeSize) {
-      showAddToCart({}); // передаём пустое сообщение, значит ошибка выбора размера
+      // ❌ размер не выбран → не дергаем API
+      showAddToCart({
+        error: "Будь ласка, виберіть розмір перед тим, як додати в кошик",
+      });
       return;
     }
-    showAddToCart({
-      title: product.title,
-      color: product.color,
-      size: activeSize,
-    });
+
     addToCart.mutate({ productId, size: activeSize });
   };
 
@@ -137,13 +132,13 @@ export const SlugPageBlock: React.FC<Props> = ({
           <div className="flex items-center justify-between">
             <p className="text-md">Розмір:</p>
             <button className="flex items-center gap-2 text-[12px]">
-              <img src="/ruletka.svg" className="w-10" />
+              <img src="/assets/ruletka.svg" className="w-10" />
               Розмірна сітка
             </button>
           </div>
           {/* sizes */}
           <div className="flex items-center gap-2">
-            {product.sizes?.map(({size}, i) => (
+            {product.sizes?.map(({ size }, i) => (
               <button
                 className={cn(
                   "px-3 py-[2px] border-1 transition-all hover:bg-chart-1 hover:text-white cursor-pointer",
@@ -159,12 +154,18 @@ export const SlugPageBlock: React.FC<Props> = ({
               </button>
             ))}
           </div>
-          <Button
-            variant={"red"}
-            className="w-full h-14 cursor-pointer uppercase"
-          >
-            Купити зараз
-          </Button>
+            <Button
+              variant={"red"}
+              className="w-full h-14 cursor-pointer uppercase"
+              onClick={() => {
+                handlAddToCart(product.id);
+                if(!activeSize ) return
+                router.push("/checkout");
+              }}
+
+            >
+              Купити зараз
+            </Button>
           <div className="flex items-center gap-2">
             <Button
               variant={"red"}
@@ -180,7 +181,9 @@ export const SlugPageBlock: React.FC<Props> = ({
               Оплата частинами
             </Button>
           </div>
-          <h3 className="max-lg:text-sm font-bold">Доставка, оплата та обмін</h3>
+          <h3 className="max-lg:text-sm font-bold">
+            Доставка, оплата та обмін
+          </h3>
           <p className="max-lg:text-sm">
             Безкоштовна доставка територією України при замовленні на суму від
             2000 грн.

@@ -12,10 +12,8 @@ interface Props {
 }
 
 const CheckoutPage: React.FC<Props> = ({ className }) => {
-
-
   return (
-    <div className={className}>
+    <div className="pb-10">
       <nav className="mb-4 mt-4 text-sm text-gray-600 px-4 flex items-center gap-1 max-lg:mb-0">
         <Link href="/">
           <House size={16} />
@@ -25,14 +23,7 @@ const CheckoutPage: React.FC<Props> = ({ className }) => {
           Оформлення замовлення
         </Link>
       </nav>
-
-      <div>
-        <CheckoutForm className="px-4" />
-      </div>
-
-       <div>
-      
-    </div>
+      <CheckoutForm className="px-4" />
     </div>
   );
 };

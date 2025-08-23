@@ -16,16 +16,16 @@ SwiperCore.use([Autoplay]);
 export const BannerBlock: React.FC<Props> = ({ className }) => {
   const bannerSlider = [
     {
-      desktop: "/banner1.jpg",
-      mobile: "/main_slider_mob.png",
+      desktop: "/assets/banner1.jpg",
+      mobile: "/assets/main_slider_mob.png",
     },
     {
-      desktop: "/banner2.jpg",
-      mobile: "/summer_avecs_comfort_600x600.jpg",
+      desktop: "/assets/banner2.jpg",
+      mobile: "/assets/summer_avecs_comfort_600x600.jpg",
     },
     {
-      desktop: "/banner3.png",
-      mobile: "/newColl.jpg",
+      desktop: "/assets/banner3.png",
+      mobile: "/assets/newColl.jpg",
     },
   ];
 

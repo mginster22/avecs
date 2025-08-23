@@ -147,7 +147,7 @@ export const DeliveryCheckoutBlock: React.FC<Props> = ({ data, className }) => {
           <AccordionContent className="h-full">
             <div className="flex items-center gap-2 max-lg:mt-2">
               <img
-                src="/novaposhta.svg"
+                src="/assets/novaposhta.svg"
                 alt="novaposhta"
                 className="w-10 max-lg:w-6"
               />
@@ -224,7 +224,7 @@ export const DeliveryCheckoutBlock: React.FC<Props> = ({ data, className }) => {
         </AccordionItem>
       </Accordion>
       {isFormValid && (
-        <Button variant={"red"} size={"red"} onClick={handlerCreateOrder}>
+        <Button variant={"red"} size={"red"} onClick={handlerCreateOrder} className="mt-4">
           Оформити
         </Button>
       )}

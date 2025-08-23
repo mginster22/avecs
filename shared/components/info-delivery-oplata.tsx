@@ -6,63 +6,63 @@ interface Props {
 const infoBlock = [
   {
     title: "Доставка",
-    imgTitle: "/delivery-icon.svg",
+    imgTitle: "/assets/delivery-icon.svg",
     items: [
       {
         title: " Нова Пошта",
-        img: "/novaposhta.svg",
+        img: "/assets/novaposhta.svg",
       },
       {
         title: "Укрпошта",
-        img: "/ukrposhta.svg",
+        img: "/assets/ukrposhta.svg",
       },
       {
         title: "Точки видачі Rozetka",
-        img: "/rozetka.svg",
+        img: "/assets/rozetka.svg",
       },
       {
         title: "Meest ПОШТА",
-        img: "/meest-strilka.svg",
+        img: "/assets/meest-strilka.svg",
       },
     ],
   },
   {
     title: "Оплата",
-    imgTitle: "/delivery-icon.svg",
+    imgTitle: "/assets/delivery-icon.svg",
     items: [
       {
         title: "LiqPay",
-        img: "/liqpay.svg",
+        img: "/assets/liqpay.svg",
       },
       {
         title: "Оплата частинами Приват Банк",
-        img: "/pp.svg",
+        img: "/assets/pp.svg",
       },
       {
         title: "Миттєва розстрочка Приват Банк",
-        img: "/mr.svg",
+        img: "/assets/mr.svg",
       },
       {
         title: "Безготівковий розрахунок",
-        img: "/terminal.svg",
+        img: "/assets/terminal.svg",
       },
       {
         title: "Післяплата",
-        img: "/nal.svg",
+        img: "/assets/nal.svg",
       },
     ],
   },
   {
     title: "Гарантії",
-    imgTitle: "/security.svg",
+    imgTitle: "/assets/security.svg",
     items: [
       {
         title: "Поверненя",
-        img: "/vozvrat.svg",
+        img: "/assets/vozvrat.svg",
       },
       {
         title: "Обмін",
-        img: "/obmen.svg",
+        img: "/assets/obmen.svg",
       },
     ],
   },

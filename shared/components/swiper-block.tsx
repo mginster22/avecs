@@ -25,12 +25,10 @@ export const SwiperBlock: React.FC<Props> = ({
   products,
   productsImg,
   isProductImgs = false,
-  className,
   swiperRef,
-  isAdaptive,
-  activeSlide,
+ 
   setActiveSlide,
-  goToSlide,
+ 
 }) => {
   const [isBeginning, setIsBeginning] = React.useState(true);
   const [isEnd, setIsEnd] = React.useState(false);

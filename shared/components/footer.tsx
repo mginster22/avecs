@@ -10,7 +10,7 @@ interface Props {
       return ( 
           <div className={cn("bg-primary p-4 flex justify-between items-center")}>
             {/* left */}
-              <div className="flex flex-col gap-4">
+              {/* <div className="flex flex-col gap-4">
                 <img src="/logo-footer.svg" alt="logo" className="w-50"/>
                 <div className="flex gap-4 items-center">
                     <img src="/liqpay.svg" className="w-6"/>
@@ -20,7 +20,7 @@ interface Props {
                     <img src="/rozetka.svg" className="w-6"/>
                     <img/>
                 </div>
-              </div>
+              </div> */}
 
               {/* middle */}
 

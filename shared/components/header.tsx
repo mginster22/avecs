@@ -3,14 +3,16 @@ import { categoryProducts } from "@/constants/categoryProducts";
 import useCartStore from "@/store/useCartStore";
 import { Heart, Menu, Search, ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import { useGetCart } from "../hooks/useGetCart";
 import { useSession } from "next-auth/react";
 import { ModalAddToCart } from "./modal-add-to-cart";
 import { cn } from "@/lib/utils";
+import { BurgerMenu } from "./burger-menu";
+import { useProducts } from "../hooks/useProducts";
+import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { BurgerMenu } from "./burger-menu";
 
 interface Props {
   className?: string;
@@ -47,6 +49,7 @@ const secondMenuItems = [
 ];
 
 export const Header: React.FC<Props> = ({ className }) => {
+  const [inputSearchFilter, setInputSearchFilter] = useState("");
   const {
     fetchCart: { data },
   } = useGetCart();
@@ -61,6 +64,14 @@ export const Header: React.FC<Props> = ({ className }) => {
   });
   const [active, setActive] = useState(false);
 
+  const router = useRouter();
+
+  const handlerRedirect = (inputSearchFilter: string) => {
+    if (inputSearchFilter) {
+      router.push(`/search/?search=${inputSearchFilter}`);
+    }
+  };
+
   return (
     <div
       className={cn(
@@ -68,11 +79,11 @@ export const Header: React.FC<Props> = ({ className }) => {
       )}
     >
       {active && <BurgerMenu active={active} setActive={setActive} />}
-      <button onClick={() => deleteOrder.mutate()}>DELETE</button>
       <ModalAddToCart />
+      <button onClick={() => deleteOrder.mutate()}>DELETE</button>
       <div className="flex items-center gap-20">
         <Link href="/">
-          <img src="/logo.png" alt="logo" className="w-26 max-lg:w-18" />
+          <img src="/assets/logo.png" alt="logo" className="w-26 max-lg:w-18" />
         </Link>
 
         <ul className={cn("flex gap-10 relative", "max-lg:hidden")}>
@@ -109,19 +120,34 @@ export const Header: React.FC<Props> = ({ className }) => {
         </ul>
       </div>
 
+      {/* input SEARCH */}
       <div className="flex items-center gap-4">
-        <label
-          className={cn(
-            "relative flex items-center transition-all duration-300 border-b border-accent-foreground focus-within:border focus-within:border-accent-foreground focus-within:rounded-xl ",
-            "max-lg:hidden"
-          )}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handlerRedirect(inputSearchFilter);
+          }}
         >
-          <Search className="absolute left-3 text-gray-500 pointer-events-none transition-all duration-300 " />
-          <input
-            className="outline-none pl-10 pr-4 py-2 w-40 transition-all duration-300 focus:w-90"
-            placeholder="Пошук"
-          />
-        </label>
+          <label
+            className={cn(
+              " flex items-center transition-all duration-300 border-b border-accent-foreground focus-within:border focus-within:border-accent-foreground focus-within:rounded-xl ",
+              "max-lg:hidden"
+            )}
+          >
+            <button
+              type="submit"
+              className=" ml-2 text-gray-500 pointer-events-none transition-all duration-300 cursor-pointer hover:text-gray-600"
+            >
+              <Search />
+            </button>
+            <input
+              className="outline-none pl-4 pr-4 py-2 w-40 transition-all duration-300 focus:w-90"
+              placeholder="Пошук"
+              value={inputSearchFilter}
+              onChange={(e) => setInputSearchFilter(e.target.value)}
+            />
+          </label>
+        </form>
 
         {/* Кнопки */}
         <div className="relative flex items-center gap-4 ">
@@ -145,7 +171,10 @@ export const Header: React.FC<Props> = ({ className }) => {
               {data?.length}
             </span>
           </div>
-          <Menu className="hidden max-lg:block" onClick={()=> setActive(true)}/>
+          <Menu
+            className="hidden max-lg:block"
+            onClick={() => setActive(true)}
+          />
         </div>
       </div>
     </div>

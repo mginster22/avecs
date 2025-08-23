@@ -44,19 +44,27 @@ export const ProductItem: React.FC<Props> = ({
 
   //МОЙ ГЛАВНЫЙ АпДЕЙТ + и -
   const { updateQuantity } = useUpdateQuantityCartOrder();
+
+  const maxQuantity = product.sizes?.find((v) => v.size === activeSize);
   //Добавление в корзину
   const handleAddToCart = (productId: string) => {
     if (!activeSize) {
-      showAddToCart({}); // передаём пустое сообщение, значит ошибка выбора размера
+      // ❌ размер не выбран → не дергаем API
+      showAddToCart({
+        error: "Будь ласка, виберіть розмір перед тим, як додати в кошик",
+      });
       return;
     }
-    showAddToCart({
-      title: product.title,
-      color: product.colorLabel,
-      size: activeSize,
-    });
+    if (quantity! > maxQuantity?.quantity!) {
+      showAddToCart({
+        error: "На жаль, тільки 1 розмір",
+      });
+      return;
+    }
+
     addToCart.mutate({ productId, size: activeSize });
   };
+
 
   const handleIncrement = () => {
     if (!cartItemId || !quantity) return;
@@ -74,7 +82,8 @@ export const ProductItem: React.FC<Props> = ({
         "group select-none flex flex-col gap-4 h-full",
         //Переиспользую компонент для корзины!!
         cartItemProduct && "flex-row h-[145px] ",
-        cartCheckOutProduct && "flex-row items-start  max-h-[150px] mt-3 h-full max-lg:mt-8",
+        cartCheckOutProduct &&
+          "flex-row items-start  max-h-[150px] mt-3 h-full max-lg:mt-8"
       )}
     >
       {/* Картинка блок! */}
@@ -107,7 +116,7 @@ export const ProductItem: React.FC<Props> = ({
         {!cartItemProduct && !cartCheckOutProduct && (
           <div
             className={cn(
-              "hidden group-hover:flex absolute bottom-0 left-1/2 -translate-x-1/2 gap-2 bg-chart-5 px-3 py-2 max-w-[250px] w-fit text-secondary max-lg:flex max-lg:max-w-[180px] max-sm:overflow-x-auto"
+              "hidden group-hover:flex absolute bottom-0 left-1/2 -translate-x-1/2 gap-2 bg-chart-5 px-3 py-2 max-w-[250px] w-fit text-secondary max-lg:flex max-sm:max-w-[160px] max-sm:overflow-x-auto max-sm:px-4"
             )}
           >
             {product.sizes?.map(({ size, id }) => (
@@ -161,7 +170,9 @@ export const ProductItem: React.FC<Props> = ({
             </button>
           )}
         </p>
-        {cartCheckOutProduct && <p className="max-lg:text-[10px] flex-1">Модель:{product.model}</p>}
+        {cartCheckOutProduct && (
+          <p className="max-lg:text-[10px] flex-1">Модель:{product.model}</p>
+        )}
 
         {(cartItemProduct || cartCheckOutProduct) && (
           <span
