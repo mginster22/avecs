@@ -1,7 +1,5 @@
-// app/[gender]/[categorySlug]/layout.tsx
 import { Metadata } from "next";
 import { categoryProducts } from "@/constants/categoryProducts";
-import Link from "next/link";
 
 interface LayoutProps {
   children: React.ReactNode;

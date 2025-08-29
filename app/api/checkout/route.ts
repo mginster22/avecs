@@ -108,11 +108,6 @@ export async function GET() {
 
 Если нет — возвращаем пустой массив товаров.*/
 
-interface OrderItem {
-  productId: string;
-  quantity: number;
-  size: string;
-}
 
 interface OrderData {
   email: string;
@@ -143,9 +138,7 @@ export async function POST(req: Request): Promise<NextResponse> {
   } else {
     guestId = (await cookieStore).get("avecscookies")?.value ?? uuidv4();
   }
-
   // проверка stock ...
-
   const newOrder = await prisma.$transaction(async (prismaTx) => {
     const orderItemsData = await Promise.all(
       items.map(async (item) => {
@@ -195,9 +188,6 @@ export async function POST(req: Request): Promise<NextResponse> {
       },
       include: { items: true },
     });
-
-    
-
     return createdOrder;
   });
 
@@ -241,41 +231,4 @@ export async function DELETE() {
   }
 }
 
-interface UpdateOrderStatusBody {
-  orderId: string;
-  status: string; // например "paid", "shipped" и т.п.
-}
 
-// export async function PUT(req: Request) {
-//   try {
-//     const { orderId, status }: UpdateOrderStatusBody = await req.json();
-
-//     if (!orderId || !status) {
-//       return NextResponse.json(
-//         { error: "orderId и status обязательны" },
-//         { status: 400 }
-//       );
-//     }
-
-//     // Обновляем статус заказа
-//     const updatedOrder = await prisma.order.update({
-//       where: { id: orderId },
-//       data: { status },
-//       include: {
-//         items: {
-//           include: {
-//             product: true,
-//           },
-//         },
-//       },
-//     });
-
-//     return NextResponse.json(updatedOrder);
-//   } catch (error) {
-//     console.error("Ошибка обновления статуса заказа:", error);
-//     return NextResponse.json(
-//       { error: "Не удалось обновить статус заказа" },
-//       { status: 500 }
-//     );
-//   }
-// }

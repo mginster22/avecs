@@ -29,7 +29,6 @@ export async function generateMetadata({
 }
 
 export default async function GenderLayout({ children, params }: LayoutProps) {
-  const { gender } = await params;
 
   return <div >{children}</div>;
 }

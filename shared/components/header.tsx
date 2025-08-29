@@ -9,10 +9,10 @@ import { useSession } from "next-auth/react";
 import { ModalAddToCart } from "./modal-add-to-cart";
 import { cn } from "@/lib/utils";
 import { BurgerMenu } from "./burger-menu";
-import { useProducts } from "../hooks/useProducts";
 import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { FavoriteItem } from "@/types/product";
 
 interface Props {
   className?: string;
@@ -57,11 +57,16 @@ export const Header: React.FC<Props> = ({ className }) => {
   const { data: sessionData, status } = useSession();
   const { toggleCart } = useCartStore();
 
-  const deleteOrder = useMutation({
-    mutationFn: async () => {
-      await axios.delete(`/api/checkout`);
+  const { data: favoritesProduct } = useQuery({
+    queryKey: ["favorite"],
+    queryFn: async () => {
+      const { data: product } = await axios.get<FavoriteItem[]>(
+        "/api/favorite"
+      );
+      return product;
     },
   });
+  
   const [active, setActive] = useState(false);
 
   const router = useRouter();
@@ -71,7 +76,9 @@ export const Header: React.FC<Props> = ({ className }) => {
       router.push(`/search/?search=${inputSearchFilter}`);
     }
   };
-
+  if (!favoritesProduct) {
+    return null;
+  }
   return (
     <div
       className={cn(
@@ -80,7 +87,6 @@ export const Header: React.FC<Props> = ({ className }) => {
     >
       {active && <BurgerMenu active={active} setActive={setActive} />}
       <ModalAddToCart />
-      <button onClick={() => deleteOrder.mutate()}>DELETE</button>
       <div className="flex items-center gap-20">
         <Link href="/">
           <img src="/assets/logo.png" alt="logo" className="w-26 max-lg:w-18" />
@@ -161,9 +167,9 @@ export const Header: React.FC<Props> = ({ className }) => {
               <User />
             )}
           </Link>
-          <Link href="/" className="relative">
+          <Link href="/favorites" className="relative">
             <Heart />
-            <span className="absolute top-0 left-4 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center text-white text-xs"></span>
+            <span className="absolute top-0 left-4 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center text-white text-xs">{favoritesProduct?.length}</span>
           </Link>
           <div className="relative">
             <ShoppingCart onClick={toggleCart} className=" cursor-pointer" />

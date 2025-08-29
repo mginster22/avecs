@@ -1,5 +1,4 @@
-// @prefix tssnips
-// @description
+
 "use client";
 import { ProductsWithFilters } from "@/shared/components";
 import { useProducts } from "@/shared/hooks/useProducts";
@@ -10,19 +9,12 @@ interface Props {
   className?: string;
 }
 
-const genderMap = {
-  men: "Чоловіки",
-  women: "Жінки",
-  unisex: "Унисекс",
-};
 
 const SearchPage: React.FC<Props> = ({ className }) => {
   const searchParams = useSearchParams();
   const search = searchParams.get("search");
 
   const { data: products } = useProducts();
-  console.log("Изначально", products);
-  console.log(search);
 
   const filteredProducts = products?.filter(
     (product) =>
@@ -30,7 +22,6 @@ const SearchPage: React.FC<Props> = ({ className }) => {
       
   );
 
-  console.log("Отфильтрованные", filteredProducts);
   if (!filteredProducts) return null;
   return (
     <div className=" ">

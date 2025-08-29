@@ -1,5 +1,4 @@
-// @prefix tssnips
-// @description
+
 
 import prisma from "@/lib/prisma";
 import CategorySlugItems from "@/shared/components/category-slug-items";

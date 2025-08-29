@@ -7,7 +7,7 @@ interface Props {
 }
 
 export const MainImageBlock: React.FC<Props> = ({
-  image = "/account.jpg",
+  image = "/assets/account.jpg",
   text,
   className,
 }) => {

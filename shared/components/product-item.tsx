@@ -1,7 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
 import useCartStore from "@/store/useCartStore";
-import { Product } from "@/types/product";
+import { FavoriteItem, Product } from "@/types/product";
 import { Delete, Heart, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import React from "react";
@@ -9,12 +9,16 @@ import { useAddToCart } from "../hooks/useAddToCart";
 import Image from "next/image";
 import { useDeleteCartItem } from "../hooks/useDeleteCartItem";
 import { useUpdateQuantityCartOrder } from "../hooks/useUpdateQuantityCartOrder";
+import { useToggleFavorite } from "../hooks/useToggleFavorite";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 interface Props {
   className?: string;
   product: Product;
   cartItemProduct?: boolean;
   cartCheckOutProduct?: boolean;
+  orderItem?: boolean;
   itemTotal?: number;
   quantity?: number;
   size?: string | undefined;
@@ -27,6 +31,7 @@ export const ProductItem: React.FC<Props> = ({
   className,
   cartItemProduct = false,
   cartCheckOutProduct = false,
+  orderItem = false,
   itemTotal,
   quantity,
   size,
@@ -34,7 +39,13 @@ export const ProductItem: React.FC<Props> = ({
   const [activeSize, setActiveSize] = React.useState<string | undefined>(
     undefined
   );
-
+  const { data: favorites } = useQuery({
+    queryKey: ["favorite"], // ✅ массив ключа
+    queryFn: async () => {
+      const { data } = await axios.get<FavoriteItem[]>("/api/favorite");
+      return data;
+    },
+  });
   // Запрос query на доавлние в корзину
   const { addToCart } = useAddToCart();
 
@@ -65,7 +76,6 @@ export const ProductItem: React.FC<Props> = ({
     addToCart.mutate({ productId, size: activeSize });
   };
 
-
   const handleIncrement = () => {
     if (!cartItemId || !quantity) return;
     updateQuantity.mutate({ id: cartItemId, quantity: quantity + 1 });
@@ -75,6 +85,13 @@ export const ProductItem: React.FC<Props> = ({
     updateQuantity.mutate({ id: cartItemId, quantity: quantity - 1 });
   };
 
+  const isFavorite = React.useMemo(
+    () => favorites?.some((fav) => fav.product?.id === product.id) ?? false,
+    [favorites, product.id]
+  );
+
+  const toggleFavorite = useToggleFavorite(product.id);
+
   const totalPriceProduct = product.price * quantity!;
   return (
     <div
@@ -83,7 +100,9 @@ export const ProductItem: React.FC<Props> = ({
         //Переиспользую компонент для корзины!!
         cartItemProduct && "flex-row h-[145px] ",
         cartCheckOutProduct &&
-          "flex-row items-start  max-h-[150px] mt-3 h-full max-lg:mt-8"
+          "flex-row items-start  max-h-[150px] mt-3 h-full max-lg:mt-8",
+        orderItem &&
+          "flex-row items-start  max-h-[150px]  h-full "
       )}
     >
       {/* Картинка блок! */}
@@ -92,11 +111,22 @@ export const ProductItem: React.FC<Props> = ({
           "overflow-hidden relative  ",
           //Переиспользую компонент для корзины!!
           cartItemProduct && "w-1/5 max-lg:w-1/6",
-          cartCheckOutProduct && "w-22"
+          cartCheckOutProduct && "w-22",
+          orderItem && "w-22"
         )}
       >
-        <div className="p-1 rounded-md bg-secondary hidden absolute top-2 right-2   group-hover:block z-40">
-          <Heart size={20} />
+        <div
+          suppressHydrationWarning
+          className={cn(
+            "p-1 rounded-md bg-secondary hidden absolute top-2 right-4   group-hover:block z-40 cursor-pointer",
+            isFavorite ? "bg-chart-1" : ""
+          )}
+        >
+          <Heart
+            size={20}
+            onClick={() => toggleFavorite.mutate()}
+            className={cn("")}
+          />
         </div>
         <Link
           href={`/${product.gender}/${product.categorySlug}/${product.slug}`}
@@ -113,7 +143,7 @@ export const ProductItem: React.FC<Props> = ({
             )}
           />
         </Link>
-        {!cartItemProduct && !cartCheckOutProduct && (
+        {!cartItemProduct && !cartCheckOutProduct && !orderItem && (
           <div
             className={cn(
               "hidden group-hover:flex absolute bottom-0 left-1/2 -translate-x-1/2 gap-2 bg-chart-5 px-3 py-2 max-w-[250px] w-fit text-secondary max-lg:flex max-sm:max-w-[160px] max-sm:overflow-x-auto max-sm:px-4"
@@ -145,7 +175,8 @@ export const ProductItem: React.FC<Props> = ({
           "flex flex-col justify-between gap-2 flex-1",
           //Переиспользую компонент для корзины!!
           cartItemProduct && "justify-baseline ",
-          cartCheckOutProduct && "justify-baseline gap-0"
+          cartCheckOutProduct && "justify-baseline gap-0",
+          orderItem && "justify-between"
         )}
       >
         <p
@@ -153,8 +184,9 @@ export const ProductItem: React.FC<Props> = ({
             "uppercase max-lg:text-xs",
             //Переиспользую компонент для корзины!!
             cartItemProduct &&
-              "text-xl font-bold max-lg:text-sm flex justify-between ",
-            cartCheckOutProduct && "flex justify-between max-lg:text-[10px] "
+              "text-md font-bold max-lg:text-sm flex justify-between ",
+            cartCheckOutProduct && "flex justify-between max-lg:text-[10px] ",
+            orderItem && "text-sm"
           )}
         >
           {product.title} - {product.model} - {product.colorLabel}{" "}
@@ -224,7 +256,8 @@ export const ProductItem: React.FC<Props> = ({
           className={cn(
             " flex items-center justify-between text-xl",
             cartCheckOutProduct && "mt-2 max-lg:text-sm",
-            cartItemProduct && " max-lg:text-sm"
+            cartItemProduct && " max-lg:text-sm",
+            orderItem && "max-lg:text-sm"
           )}
         >
           {cartItemProduct ? itemTotal : product.price} ГРН
@@ -233,21 +266,26 @@ export const ProductItem: React.FC<Props> = ({
               if (
                 !addToCart.isPending &&
                 !cartItemProduct &&
-                !cartCheckOutProduct
+                !cartCheckOutProduct &&
+                !orderItem // добавили проверку на orderItem
               ) {
                 handleAddToCart(product.id);
               }
             }}
             className={cn(
               "px-[10px] py-[6px] bg-chart-5 rounded-md transition-all cursor-pointer hover:bg-chart-1 hover:text-white",
-              cartCheckOutProduct
-                ? " cursor-not-allowed pointer-events-none bg-white "
+              orderItem
+                ? "hidden" // если есть orderItem — отключаем
+                : cartCheckOutProduct
+                ? "cursor-not-allowed pointer-events-none bg-white"
                 : cartItemProduct
                 ? "bg-white"
                 : ""
             )}
           >
-            {cartCheckOutProduct ? (
+            {orderItem ? (
+              ""
+            ) : cartCheckOutProduct ? (
               <p className="text-foreground">Разом: {totalPriceProduct}</p>
             ) : cartItemProduct ? (
               <span>x {quantity}</span>

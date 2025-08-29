@@ -1,7 +1,6 @@
-import { RegisterForm } from "@/shared/components/forms/register-form";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 import { AuthItemsBlock } from "@/shared/components";
+import { RegisterForm } from "@/shared/forms/register-form";
 
 interface Props {
   className?: string;
@@ -13,7 +12,7 @@ const RegisterPage: React.FC<Props> = ({ className }) => {
       {/* img block */}
       <AuthItemsBlock
         title="  Відкрийте для себе переваги реєстрації в Avecs"
-        img="/register.png"
+        img="/assets/register.png"
         isSignUp
       >
         <RegisterForm />

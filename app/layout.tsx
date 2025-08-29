@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Montserrat, Roboto } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { Footer, Header, InfoHeader } from "@/shared/components";
 import Providers from "@/shared/components/providers";
@@ -32,6 +32,7 @@ export default async function RootLayout({
           <Header />
           <ModalCart />
           <div className="flex-1">{children}</div>
+          <Footer/>
         </Providers>
       </body>
     </html>

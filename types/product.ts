@@ -1,3 +1,4 @@
+
 export interface ProductSize {
   id: string;
   size: string; // например "S"
@@ -61,4 +62,21 @@ export interface CartWithItems {
       // остальные поля продукта
     };
   }[];
+}
+export interface FavoriteItem{
+  id:string;
+  productId:string
+  userId:string
+  product:Product
+}
+export interface OrderItems{
+  id:string;
+  orderId:string;
+  price:number;
+  quantity:number;
+  size:string;
+  productId:string;
+  product:Product;
+  createdAt:Date;
+  updatedAt:Date  
 }

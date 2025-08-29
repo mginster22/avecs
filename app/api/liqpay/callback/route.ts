@@ -1,4 +1,3 @@
-
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { OrderStatus } from "@/app/generated/prisma";
@@ -23,11 +22,16 @@ export async function POST(req: Request) {
 
     if (signature !== expected) {
       console.warn("Bad signature");
-      return NextResponse.json({ ok: false, message: "Bad signature" }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, message: "Bad signature" },
+        { status: 400 }
+      );
     }
 
     // Распаковываем данные
-    const paymentData = JSON.parse(Buffer.from(data, "base64").toString("utf-8"));
+    const paymentData = JSON.parse(
+      Buffer.from(data, "base64").toString("utf-8")
+    );
     const orderId = paymentData.order_id; // UUID
     const status = paymentData.status;
 
@@ -46,7 +50,10 @@ export async function POST(req: Request) {
 
     if (!order) {
       console.warn("Order not found");
-      return NextResponse.json({ ok: false, message: "Order not found" }, { status: 404 });
+      return NextResponse.json(
+        { ok: false, message: "Order not found" },
+        { status: 404 }
+      );
     }
 
     if (order.isPaid) {
@@ -71,9 +78,29 @@ export async function POST(req: Request) {
 
     console.log("Order payment completed successfully");
 
-    return NextResponse.json({ ok: true });
+    const updatedOrder = await prisma.order.update({
+      where: { id: orderId },
+      data: {
+        isPaid: true,
+        status: "PAID",
+      },
+      include: { items: true },
+    });
+    if (updatedOrder.userId) {
+      await prisma.cartItem.deleteMany({
+        where: { cart: { userId: updatedOrder.userId } },
+      });
+    } else if (updatedOrder.guestId) {
+      await prisma.cartItem.deleteMany({
+        where: { cart: { guestId: updatedOrder.guestId } },
+      });
+    }
+    return NextResponse.json({ ok: true ,order: updatedOrder });
   } catch (err) {
     console.error("Error in LiqPay callback:", err);
-    return NextResponse.json({ ok: false, message: "Server error" }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, message: "Server error" },
+      { status: 500 }
+    );
   }
 }

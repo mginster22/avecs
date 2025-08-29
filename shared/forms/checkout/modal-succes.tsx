@@ -2,7 +2,7 @@
 
 import React, {  useEffect } from "react";
 import { Button } from "@/shared/ui/button";
-import { CartItem, Product } from "@/types/product";
+import { CartItem } from "@/types/product";
 
 interface Props {
   isOpen: boolean;
@@ -43,40 +43,42 @@ export const ModalSuccess: React.FC<Props> = ({
         <h2 className="text-2xl font-semibold text-center text-chart-1 mb-4">
           Ваш заказ успешно создан!
         </h2>
-        <div className="flex justify-between">
-          <ul className="w-1/2 ">
+        <div className="grid grid-cols-2 gap-4">
+          {/* left */}
+          <ul className="h-90 overflow-y-scroll">
             {items.map((item, index) => (
               <li key={index} className="mb-4">
-                <p className="text-md  max-w-50 font-bold">
+                <p className="text-md  max-w-50 font-bold max-lg:text-xs">
                   {item.product.title} {item.product.model}
                 </p>
                 <div className="flex gap-2">
                   <img
                     src={item.product.img[0]}
                     alt={item.product.title}
-                    className="w-25 mt-2"
+                    className="w-25 mt-2 max-lg:w-16  "
                   />
                   <div className="flex flex-col gap-2 mt-2">
-                    <p className="text-md ">
+                    <p className="text-md max-lg:text-xs">
                       Ціна:
-                      <span className="font-bold">
+                      <span className="font-bold ">
                         {item.product.price} грн
                       </span>
                     </p>
-                    <p className="">Кількість: {item.quantity}</p>
+                    <p className="max-lg:text-xs">Кількість: {item.quantity}</p>
                   </div>
                 </div>
               </li>
             ))}
           </ul>
-          <div className="w-1/2 flex flex-col gap-10 mt-10">
-            <div className="flex flex-col gap-4">
-              <p className="text-md font-bold mb-2">Контактна інформація:</p>
+          {/* right */}
+          <div className=" flex flex-col gap-10 ">
+            <div className="flex flex-col gap-4 max-lg:text-xs ">
+              <p className="text-md font-bold mb-2 max-lg:mb-0 ">Контактна інформація:</p>
               <p className="text-md ">Email: {email}</p>
               <p className="text-md ">Телефон: {phone}</p>
             </div>
-            <div className="flex flex-col gap-4">
-              <p className="text-md font-bold mb-2">Адреса доставки:</p>
+            <div className="flex flex-col gap-4 max-lg:text-xs">
+              <p className="text-md font-bold mb-2 max-lg:mb-0">Адреса доставки:</p>
               <p className="text-md ">Регіон: {inputRegion}</p>
               <p className="text-md ">Місто: {inputCity}</p>
               <p className="text-md ">Відділення: {inputBranch}</p>

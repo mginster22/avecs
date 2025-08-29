@@ -1,8 +1,8 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { AuthItemsBlock } from "@/shared/components";
-import { LoginForm } from "@/shared/components/forms/login-form";
-import Link from "next/link";
+import { LoginForm } from "@/shared/forms/login-form";
+
 import React from "react";
 
 interface Props {
@@ -13,7 +13,7 @@ const LoginPage: React.FC<Props> = ({ className }) => {
   return (
     <div className={cn("flex flex-col pb-10", className)}>
       {/* img block */}
-     <AuthItemsBlock title="Вхід в систему" img="/login.png" >
+     <AuthItemsBlock title="Вхід в систему" img="/assets/login.png" >
         <LoginForm />
       </AuthItemsBlock>
     </div>

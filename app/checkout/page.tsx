@@ -1,7 +1,5 @@
 "use client";
 import { CheckoutForm } from "@/shared/forms/checkout/checkout-form";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 
 import { ChevronRight, House } from "lucide-react";
 import Link from "next/link";

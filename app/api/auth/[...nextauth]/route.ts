@@ -37,6 +37,7 @@ export const authOptions: AuthOptions = {
           firstName: user.firstName,
           lastName: user.lastName,
           phone: user.phone,
+          role: user.role,
         };
       },
     }),
@@ -49,6 +50,7 @@ export const authOptions: AuthOptions = {
         token.firstName = user.firstName; // <-- добавляем
         token.lastName = user.lastName;
         token.phone = user.phone;
+        token.role = user.role;
       }
       return token;
     },
@@ -60,6 +62,7 @@ export const authOptions: AuthOptions = {
         session.user.firstName = token.firstName as string; // <-- добавляем
         session.user.lastName = token.lastName as string;
         session.user.phone=token.phone as string;
+        session.user.role = token.role as string;
       }
       return session;
     },

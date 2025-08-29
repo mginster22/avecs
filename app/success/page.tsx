@@ -14,10 +14,12 @@ export default function SuccessPage() {
       const res = await axios.get(`/api/checkout/${orderId}`);
       return res.data;
     },
+    
     refetchInterval: 2000,  // проверяем каждые 2 сек
     retry: 20,               // попытки пока не придёт isPaid=true
   });
 
+  
   if (isLoading)
     return <p className="text-center mt-20">⏳ Завантаження...</p>;
   if (!data)

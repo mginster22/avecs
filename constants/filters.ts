@@ -33,6 +33,7 @@ export const filters: Filter[] = [
       { label: "Блакитний", color: "blue" },
       { label: "Темно-синій", color: "dark blue"},
       { label: "Бежевий", color: "bewevuy"},
+      { label: "Коричневий", color: "brown"},
     ],
   },
   {

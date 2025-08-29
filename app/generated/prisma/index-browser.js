@@ -132,6 +132,13 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.FavoriteScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  productId: 'productId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.ProductScalarFieldEnum = {
   id: 'id',
   category: 'category',
@@ -241,6 +248,7 @@ exports.PaymentType = exports.$Enums.PaymentType = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  Favorite: 'Favorite',
   Product: 'Product',
   ProductSize: 'ProductSize',
   Cart: 'Cart',
