@@ -2,12 +2,16 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { cookies } from "next/headers";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  {
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}
 ) {
   const { id } = await params;
   const { quantity } = await req.json();
@@ -62,7 +66,11 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  {
+  params,
+}: {
+  params: Promise<{id: string }>;
+}
 ) {
   const { id } = await params;
   const session = await getServerSession(authOptions);

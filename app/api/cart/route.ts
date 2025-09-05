@@ -1,9 +1,9 @@
+import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
-import { authOptions } from "../auth/[...nextauth]/route";
 
 export async function GET() {
   //1.Смотрим, авторизован ли пользователь

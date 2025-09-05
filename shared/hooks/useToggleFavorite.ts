@@ -1,10 +1,12 @@
 import useFavoriteStore from "@/store/useFavorite";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 
 export const useToggleFavorite = (productId: string) => {
   const queryClient = useQueryClient();
   const { showAddToFavorite } = useFavoriteStore();
+  const session = useSession();
 
   return useMutation({
     mutationFn: async () => {
@@ -14,6 +16,9 @@ export const useToggleFavorite = (productId: string) => {
 
     // ⚡ моментально обновляем кэш до ответа сервера
     onMutate: async () => {
+      if (session.status !== "authenticated") {
+        return;
+      }
       await queryClient.cancelQueries({ queryKey: ["favorite"] });
 
       const prevFavorites = queryClient.getQueryData<any[]>(["favorite"]);
@@ -39,11 +44,16 @@ export const useToggleFavorite = (productId: string) => {
     },
 
     // если ошибка → откатываем
-    onError: (_err, _vars, context) => {
+    onError: (err: any, _vars, context) => {
       if (context?.prevFavorites) {
         queryClient.setQueryData(["favorite"], context.prevFavorites);
       }
-      showAddToFavorite({ error: "Ошибка при обновлении избранного" });
+
+      // достаём сообщение с сервера
+      const serverError =
+        err?.response?.data?.error || "Ошибка при обновлении избранного";
+
+      showAddToFavorite({ error: serverError });
     },
 
     // ⚡ после ответа сервера → синк
@@ -64,7 +74,10 @@ export const useToggleFavorite = (productId: string) => {
             model: data.favorite.product.model,
             action: "added",
           });
-          return [...old.filter(f => f.product.id !== productId), data.favorite];
+          return [
+            ...old.filter((f) => f.product.id !== productId),
+            data.favorite,
+          ];
         }
         return old;
       });

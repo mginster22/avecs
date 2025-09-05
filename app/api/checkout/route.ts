@@ -1,17 +1,12 @@
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]/route";
 import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
 import { v4 as uuidv4 } from "uuid";
 import { NextResponse } from "next/server";
 import { PaymentType } from "@/app/generated/prisma";
 import { generateLiqPayForm } from "@/lib/liqpay";
+import { authOptions } from "@/lib/auth";
 
-interface OrderItem {
-  productId: string;
-  size: string;
-  quantity: number;
-}
 interface OrderData {
   email: string;
   phone: string;
@@ -108,13 +103,13 @@ export async function GET() {
 
 Если нет — возвращаем пустой массив товаров.*/
 
-
 interface OrderData {
   email: string;
   phone: string;
   region: string;
   city: string;
   branch: string;
+  bonusUsed: number;
   payment: "cash" | "liqpay" | "byDetails";
 }
 
@@ -123,7 +118,11 @@ export async function POST(req: Request): Promise<NextResponse> {
     items,
     orderData,
   }: {
-    items: { productId: string; size: string; quantity: number }[];
+    items: {
+      productId: string;
+      size: string;
+      quantity: number;
+    }[];
     orderData: OrderData;
   } = await req.json();
 
@@ -138,6 +137,7 @@ export async function POST(req: Request): Promise<NextResponse> {
   } else {
     guestId = (await cookieStore).get("avecscookies")?.value ?? uuidv4();
   }
+
   // проверка stock ...
   const newOrder = await prisma.$transaction(async (prismaTx) => {
     const orderItemsData = await Promise.all(
@@ -154,11 +154,32 @@ export async function POST(req: Request): Promise<NextResponse> {
         };
       })
     );
-
     const total = orderItemsData.reduce(
       (acc, item) => acc + item.price * item.quantity,
       0
     );
+    // 1) берём актуальные бонусы из БД
+    let userBonusPoints = 0;
+    if (userId) {
+      const user = await prismaTx.user.findUnique({
+        where: { id: userId },
+        select: { bonusPoints: true },
+      });
+      userBonusPoints = user?.bonusPoints ?? 0;
+    }
+    const requestedBonus = Number.isFinite(orderData.bonusUsed as number)
+      ? Number(orderData.bonusUsed)
+      : 0;
+
+    const bonusUserUsed = Math.max(
+      0,
+      Math.min(requestedBonus, userBonusPoints, total)
+    );
+
+    // const userBonusPoints = session?.user?.bonusPoints ?? 0;
+    // const bonusUserUsed = Math.min(orderData.bonusUsed || 0, userBonusPoints);
+     const totalAfterBonus = Math.max(total - bonusUserUsed, 0);
+    const bonusToAdd = Math.floor(totalAfterBonus * 0.01); // 1% от суммы после списания
 
     const paymentMap: Record<FrontPaymentType, PaymentType> = {
       cash: PaymentType.CASH, // <-- маленькими буквами
@@ -183,11 +204,24 @@ export async function POST(req: Request): Promise<NextResponse> {
         payment: paymentMap[orderData.payment],
         status: "PENDING",
         isPaid: false,
-        total,
+        total: totalAfterBonus,
+        bonusUsed: bonusUserUsed,
+        bonusEarned: bonusToAdd,
         items: { create: orderItemsData },
       },
       include: { items: true },
     });
+    if (userId) {
+      await prismaTx.user.update({
+        where: { id: userId },
+        data: {
+          bonusPoints: {
+            increment: bonusToAdd - bonusUserUsed,
+          },
+        },
+      });
+    }
+
     return createdOrder;
   });
 
@@ -230,5 +264,3 @@ export async function DELETE() {
     );
   }
 }
-
-

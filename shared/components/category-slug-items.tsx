@@ -12,12 +12,14 @@ interface Props {
     categorySlug: string;
   };
   productsCategorySlug: Product[];
+  genderFilter: string;
 }
 
 const CategorySlugItems: React.FC<Props> = ({
   productsCategorySlug,
   paramsItems,
   className,
+  genderFilter
 }) => {
   const { gender, categorySlug } = paramsItems;
 
@@ -25,6 +27,8 @@ const CategorySlugItems: React.FC<Props> = ({
     productsCategorySlug.length > 0
       ? productsCategorySlug[0].category || productsCategorySlug[0].categorySlug
       : categorySlug.replace("-", " ");
+
+console.log(gender)
 
   return (
     <div className={cn("flex flex-col ")}>
@@ -35,7 +39,7 @@ const CategorySlugItems: React.FC<Props> = ({
         <ChevronRight size={18} />
 
         <Link href={`/${gender}`} className="hover:underline">
-          {gender === "men" ? "Чоловікам" : "Жінкам"}
+          {genderFilter}
         </Link>
         <ChevronRight size={18} />
         <Link href={`/${gender}/${categorySlug}`} className="hover:underline">

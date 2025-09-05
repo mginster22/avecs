@@ -15,13 +15,20 @@ import { ModalSuccess } from "./modal-succes";
 import { CartItem } from "@/types/product";
 import { Button } from "@/shared/ui/button";
 import { useDeleteCart } from "@/shared/hooks/useDeleteCart";
+import { redirect } from "next/navigation";
 
 interface Props {
   className?: string;
   data: CartItem[];
+  bonus: number;
+  setBonus: (value: number) => void;
 }
 
-export const DeliveryCheckoutBlock: React.FC<Props> = ({ data, className }) => {
+export const DeliveryCheckoutBlock: React.FC<Props> = ({
+  data,
+  className,
+  bonus,
+}) => {
   const { data: session } = useSession();
   const [email, setEmail] = useState(session?.user?.email || "");
   const [phone, setPhone] = useState("+380");
@@ -39,16 +46,21 @@ export const DeliveryCheckoutBlock: React.FC<Props> = ({ data, className }) => {
 
   const createOrder = useCreateOrder();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const handlerCreateOrder = () => {
     createOrder.mutate(
       {
-        items: data,
+        items: data.map((item) => ({
+          productId: item.product.id,
+          size: item.size,
+          quantity: item.quantity,
+        })),
+
         orderData: {
           email,
           phone,
           region: regionInput,
           city: cityInput,
+          bonusUsed: bonus,
           branch: branchInput,
           payment: paymentMethod,
         },
@@ -95,8 +107,10 @@ export const DeliveryCheckoutBlock: React.FC<Props> = ({ data, className }) => {
         onClose={() => {
           setIsModalOpen(false);
           deleteCart.mutate();
+          redirect("/");
         }}
         items={data}
+        bonus={bonus}
         email={email}
         phone={phone}
         inputRegion={regionInput}
@@ -224,7 +238,12 @@ export const DeliveryCheckoutBlock: React.FC<Props> = ({ data, className }) => {
         </AccordionItem>
       </Accordion>
       {isFormValid && (
-        <Button variant={"red"} size={"red"} onClick={handlerCreateOrder} className="mt-4">
+        <Button
+          variant={"red"}
+          size={"red"}
+          onClick={handlerCreateOrder}
+          className="mt-4"
+        >
           Оформити
         </Button>
       )}

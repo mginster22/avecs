@@ -12,6 +12,7 @@ import { useUpdateQuantityCartOrder } from "../hooks/useUpdateQuantityCartOrder"
 import { useToggleFavorite } from "../hooks/useToggleFavorite";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 
 interface Props {
   className?: string;
@@ -39,12 +40,17 @@ export const ProductItem: React.FC<Props> = ({
   const [activeSize, setActiveSize] = React.useState<string | undefined>(
     undefined
   );
+  const session = useSession();
+
   const { data: favorites } = useQuery({
     queryKey: ["favorite"], // ✅ массив ключа
     queryFn: async () => {
-      const { data } = await axios.get<FavoriteItem[]>("/api/favorite");
+      const { data } = await axios.get<FavoriteItem[]>("/api/favorite", {
+        withCredentials: true,
+      });
       return data;
     },
+    enabled: session.status === "authenticated",
   });
   // Запрос query на доавлние в корзину
   const { addToCart } = useAddToCart();
@@ -92,7 +98,13 @@ export const ProductItem: React.FC<Props> = ({
 
   const toggleFavorite = useToggleFavorite(product.id);
 
-  const totalPriceProduct = product.price * quantity!;
+  const priceWithDiscount = product.discount
+    ? Math.round(product.price - product.price * (product.discount / 100))
+    : product.price;
+  const totalPriceProduct = product.discount
+    ? priceWithDiscount * quantity!
+    : product.price * quantity!;
+
   return (
     <div
       className={cn(
@@ -101,8 +113,7 @@ export const ProductItem: React.FC<Props> = ({
         cartItemProduct && "flex-row h-[145px] ",
         cartCheckOutProduct &&
           "flex-row items-start  max-h-[150px] mt-3 h-full max-lg:mt-8",
-        orderItem &&
-          "flex-row items-start  max-h-[150px]  h-full "
+        orderItem && "flex-row items-start  max-h-[150px]  h-full "
       )}
     >
       {/* Картинка блок! */}
@@ -118,8 +129,9 @@ export const ProductItem: React.FC<Props> = ({
         <div
           suppressHydrationWarning
           className={cn(
-            "p-1 rounded-md bg-secondary hidden absolute top-2 right-4   group-hover:block z-40 cursor-pointer",
-            isFavorite ? "bg-chart-1" : ""
+            "p-1 rounded-md bg-secondary hidden absolute top-2 right-4   group-hover:block z-30 cursor-pointer",
+            isFavorite ? "bg-chart-1" : "",
+            (cartItemProduct || cartCheckOutProduct) && "group-hover:hidden"
           )}
         >
           <Heart
@@ -128,6 +140,16 @@ export const ProductItem: React.FC<Props> = ({
             className={cn("")}
           />
         </div>
+        {product.discount > 0 && (
+          <div
+            className={cn(
+              "px-5 py-1 rounded-md bg-[#FF0000]  text-[13px] font-bold  absolute top-2 left-4    z-30 cursor-pointer text-white"
+            )}
+          >
+            {product.discount}%
+          </div>
+        )}
+
         <Link
           href={`/${product.gender}/${product.categorySlug}/${product.slug}`}
         >
@@ -143,6 +165,8 @@ export const ProductItem: React.FC<Props> = ({
             )}
           />
         </Link>
+
+        {/* sizes hover */}
         {!cartItemProduct && !cartCheckOutProduct && !orderItem && (
           <div
             className={cn(
@@ -252,6 +276,7 @@ export const ProductItem: React.FC<Props> = ({
           </div>
         )}
 
+        {/* цена */}
         <span
           className={cn(
             " flex items-center justify-between text-xl",
@@ -260,7 +285,18 @@ export const ProductItem: React.FC<Props> = ({
             orderItem && "max-lg:text-sm"
           )}
         >
-          {cartItemProduct ? itemTotal : product.price} ГРН
+          {product.discount ? (
+            <span className="text-chart-1 font-bold flex items-center gap-4 max-lg:text-sm">
+              {priceWithDiscount}грн{" "}
+              <p className="line-through text-[16px] max-lg:text-xs text-gray-500">
+                {product.price}грн
+              </p>
+            </span>
+          ) : cartItemProduct ? (
+            itemTotal
+          ) : (
+            `${product.price}грн`
+          )}
           <span
             onClick={() => {
               if (

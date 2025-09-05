@@ -24,41 +24,41 @@ async function main() {
   //     },
   //   });
   // }
-await prisma.product.upsert({
-  where: { slug: "women-legincu-30570-1" },
-  update: {},
-  create: {
-    gender: "women",
-    category: "Легінси",
-    categorySlug: "legincu",
-    title: "Легінси Avecs темно-сірі з технологією Flat Seams",
-    season: "Демисезон",
-    model: "30570-1",
-    slug: "women-legincu-30570-1",
-    price: 1343,
-    color: "gray",
-    colorLabel: "",
-    composition: ["Нейлон 69%", "Поліестер 18%", "Спандекс 13%"],
-    peculiarities: [
-      "Soft touch",
-      "Breathable",
-      "Sweat Wiking",
-    ],
-    description: "Жіночі легінси AVECS ...",
-    img: [
-      "/legincu/model(30570-17)/1.webp",
-      "/legincu/model(30570-17)/2.webp",
-      "/legincu/model(30570-17)/3.webp",
-    ],
-    sizes: {
-      create: [
-        { size: "M", quantity: 10 },
-        { size: "L", quantity: 5 },
-        { size: "XL", quantity: 5 },
-      ],
-    },
-  },
-});
+// await prisma.product.upsert({
+//   where: { slug: "women-legincu-30570-1" },
+//   update: {},
+//   create: {
+//     gender: "women",
+//     category: "Легінси",
+//     categorySlug: "legincu",
+//     title: "Легінси Avecs темно-сірі з технологією Flat Seams",
+//     season: "Демисезон",
+//     model: "30570-1",
+//     slug: "women-legincu-30570-1",
+//     price: 1343,
+//     color: "gray",
+//     colorLabel: "",
+//     composition: ["Нейлон 69%", "Поліестер 18%", "Спандекс 13%"],
+//     peculiarities: [
+//       "Soft touch",
+//       "Breathable",
+//       "Sweat Wiking",
+//     ],
+//     description: "Жіночі легінси AVECS ...",
+//     img: [
+//       "/legincu/model(30570-17)/1.webp",
+//       "/legincu/model(30570-17)/2.webp",
+//       "/legincu/model(30570-17)/3.webp",
+//     ],
+//     sizes: {
+//       create: [
+//         { size: "M", quantity: 10 },
+//         { size: "L", quantity: 5 },
+//         { size: "XL", quantity: 5 },
+//       ],
+//     },
+//   },
+// });
 
 
   // const users = [

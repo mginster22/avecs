@@ -6,6 +6,12 @@ import React from "react";
 import { SessionProvider } from "next-auth/react";
 const queryClient = new QueryClient();
 
+
+
+
+
+// This code is for all users
+
 interface Props {
   children: React.ReactNode;
 }

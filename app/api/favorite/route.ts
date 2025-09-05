@@ -1,27 +1,33 @@
+import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { authOptions } from "../auth/[...nextauth]/route";
 
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
-  if (session) {
-    const userId = session?.user.id;
-    const favoriteItems = await prisma.favorite.findMany({
-      where: {  userId },
-      include: { product: true },
-    });
-    return NextResponse.json(favoriteItems);
-  }
-}
 
+  if (!session) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
+  const userId = session.user.id;
+  const favoriteItems = await prisma.favorite.findMany({
+    where: { userId },
+    include: { product: true },
+  });
+
+  return NextResponse.json(favoriteItems);
+}
 
 export async function POST(req: Request) {
   const { productId } = await req.json();
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Ви повинні бути авторизовані" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Ви повинні бути авторизовані" },
+      { status: 400 }
+    );
   }
 
   const userId = session.user.id;
@@ -50,4 +56,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ action: "added", favorite: created });
   }
 }
-

@@ -1,20 +1,43 @@
 "use client";
 import { Button } from "@/shared/ui/button";
 import { InputCustom } from "@/shared/ui/input-custom";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { ForgotPasswordForm } from "./forgot-password-form";
 
 interface Props {
   className?: string;
 }
 
 export const LoginForm: React.FC<Props> = ({ className }) => {
+
+  const [active, setActive] = useState(false);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+
+  const { status } = useSession();
+  const [disabled, setDisabled] = useState(false);
+
+  const handleLogin = async () => {
+    setDisabled(true); // сразу дизейблим кнопку
+    await signIn("google", {
+      callbackUrl: "/",
+    });
+  };
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      setDisabled(false); // если не залогинился — снова активируем
+    }
+    if (status === "authenticated") {
+      setDisabled(true); // если залогинился — кнопку можно скрыть или оставить disabled
+    }
+  }, [status]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,6 +80,11 @@ export const LoginForm: React.FC<Props> = ({ className }) => {
           value={password}
           onChange={(value) => setPassword(value)}
         />
+        <div className="flex justify-start w-1/2">
+          <button className="text-sm text-chart-1 hover:underline cursor-pointer " onClick={() => setActive(true)}>
+            Забули пароль?
+          </button>
+        </div>
         <Button
           variant={"red"}
           size={"red"}
@@ -67,12 +95,25 @@ export const LoginForm: React.FC<Props> = ({ className }) => {
         </Button>
         {error && <p className="text-red-500 text-sm">{error}</p>}
       </form>
+      <button
+        onClick={handleLogin}
+        disabled={disabled}
+        className={`cursor-pointer mx-auto flex items-center  px-4 py-2 rounded hover:underline ${
+          disabled ? "bg-gray-400 cursor-not-allowed" : ""
+        }`}
+      >
+        {disabled ? "Подождите..." : "Увійти через Google"}
+        <img src="/assets/google.png" alt="google" className="w-12" />
+      </button>
+      {/* забыли пароль */}
+
       <Link href="/auth/signup" className="mx-auto">
         <span className="max-lg:text-sm">
           Немає облікового запису?
           <span className="text-chart-1"> Реєстрація</span>
         </span>
       </Link>
+      {active && <ForgotPasswordForm setActive={() => setActive(false)} />}
     </div>
   );
 };

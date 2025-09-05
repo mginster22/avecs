@@ -15,6 +15,7 @@ interface OrderData {
   city: string;
   branch: string;
   payment: string;
+  bonusUsed: number;
 }
 interface CreateOrderPayload {
   items: OrderItem[];

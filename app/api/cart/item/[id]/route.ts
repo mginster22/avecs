@@ -2,15 +2,19 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { cookies } from "next/headers";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } } // id = cartItem.id
+ {
+  params,
+}: {
+  params: Promise<{ id: string;  }>;
+} // id = cartItem.id
 ) {
   try {
     const session = await getServerSession(authOptions);
-    const { id } = params;
+    const { id } =await params;
     const cookiesStore = cookies();
 
     const cartItem = await prisma.cartItem.findUnique({

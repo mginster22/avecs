@@ -4,9 +4,7 @@ import { MainImageBlock } from "@/shared/components/main-image-block";
 import Link from "next/link";
 import React from "react";
 import { signOut } from "next-auth/react";
-interface Props {
-  className?: string;
-}
+
 
 interface UserMenuItem {
   title: string;
@@ -19,31 +17,31 @@ const userMenuItems: UserMenuItem[] = [
   {
     title: "Мої замовлення",
     values: [
-      { title: "Вподобання", link: "/favorite" },
+      { title: "Вподобання", link: "/favorites" },
       { title: "Історія замовлень", link: "/orders" },
     ],
   },
   {
     title: "Мої бонуси",
     values: [
-      { title: "Доступні купони", link: "/favorite" },
-      { title: "Бонусні бали", link: "/orders" },
+      { title: "Доступні купони", link: "/" },
+      { title: "Бонусні бали", link: "/" },
     ],
   },
   {
     title: "Обліковий запис",
     values: [
-      { title: "Контактна інформація", link: "/favorite" },
-      { title: "Зміна пароля", link: "/orders" },
+      { title: "Контактна інформація", link: "/" },
+      { title: "Зміна пароля", link: "/" },
       { title: "Вихід" },
     ],
   },
 ];
-const MyAccountPage: React.FC<Props> = ({ className }) => {
-
+const MyAccountPage= (
+) => {
     
   return (
-    <div className={cn("pb-10 flex flex-col gap-10", className)}>
+    <div className={cn("pb-10 flex flex-col gap-10")}>
       <MainImageBlock text="Вітаємо вас в особистому кабінеті AVECS!" />
       <div className="grid grid-cols-3 gap-4 px-4 mt-10 max-lg:grid-cols-1 max-lg:mt-0">
         {userMenuItems.map((item, i) => (

@@ -6,11 +6,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import React from "react";
 
-interface Props {
-  className?: string;
-}
 
-const UserOrderPage: React.FC<Props> = ({ className }) => {
+
+const UserOrderPage= () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["myOrders"],
     refetchInterval: 4000,
@@ -24,7 +22,7 @@ const UserOrderPage: React.FC<Props> = ({ className }) => {
   if (error) return <p>Ошибка загрузки заказов</p>;
   console.log(data)
   return (
-    <div className={className}>
+    <div>
       <h1>Мої замовлення</h1>
       {data.length === 0 && <p>У вас ещё нет заказов</p>}
       <div className="grid grid-cols-5 gap-2 max-lg:grid-cols-1 px-4">

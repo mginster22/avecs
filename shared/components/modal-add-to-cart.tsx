@@ -16,7 +16,7 @@ export const ModalAddToCart: React.FC<Props> = ({ className }) => {
     <div
       suppressHydrationWarning
       className={cn(
-        "fixed top-24 right-10 max-w-[700px] w-fit max-h-[80px] h-full z-[60] flex items-center gap-3 bg-accent text-primary px-4 py-2 border-1 border-primary shadow-lg transition-all duration-300 max-lg:right-4  max-lg:h-[60px] max-lg:max-w-[400px]",
+        "fixed top-14 right-10 max-w-[700px] w-fit max-h-[80px] h-full z-[60] flex items-center gap-3 bg-accent text-primary px-4 py-2 border-1 border-primary shadow-lg transition-all duration-300 max-lg:right-4  max-lg:h-[60px] max-lg:max-w-[400px]",
         isAddToCart || isAddToFavorite
       ? "opacity-100 translate-y-0"
       : "opacity-0 -translate-y-4 pointer-events-none",

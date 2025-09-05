@@ -9,6 +9,8 @@ interface Props {
   title?: string;
   link?: string;
   isClassName?: boolean;
+  isBlog?: boolean;
+  description?: string;
 }
 
 export const InfoCartBlock: React.FC<Props> = ({
@@ -17,9 +19,11 @@ export const InfoCartBlock: React.FC<Props> = ({
   title,
   link,
   isClassName,
+  isBlog = false,
+  description,
 }) => {
   return (
-    <div className={cn("flex flex-col gap-4 items-start", className)}>
+    <div className={cn("flex flex-col gap-4 items-start",isBlog && "gap-2", className)}>
       {link && (
         <Link
           href={link}
@@ -35,10 +39,11 @@ export const InfoCartBlock: React.FC<Props> = ({
           />
         </Link>
       )}
-      <p className={cn("", isClassName && "text-5xl font-bold")}>{title}</p>
-      {link && (
+      <p className={cn("font-bold",isBlog && "text-2xl", isClassName && "text-5xl ")}>{title}</p>
+      {isBlog && description && <p className="text-gray-500 text-sm">{description}</p>}
+      {link && isBlog === false && (
         <Link href={link}>
-          <Button variant="red" size="red" >
+          <Button variant="red" size="red">
             ПЕРЕЙТИ
           </Button>
         </Link>

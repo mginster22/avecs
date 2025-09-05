@@ -5,11 +5,9 @@ import { ChevronRight, House } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
-interface Props {
-  className?: string;
-}
 
-const CheckoutPage: React.FC<Props> = ({ className }) => {
+
+const CheckoutPage = () => {
   return (
     <div className="pb-10">
       <nav className="mb-4 mt-4 text-sm text-gray-600 px-4 flex items-center gap-1 max-lg:mb-0">

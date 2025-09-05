@@ -11,9 +11,11 @@ datasource db {
 model User {
   id        String  @id @default(cuid())
   email     String  @unique
-  password  String
+  password  String?
   firstName String?
   lastName  String?
+
+  bonusPoints Float? @default(0)
 
   phone String
   role  Role   @default(USER)
@@ -22,8 +24,23 @@ model User {
   orders    Order[]
   products  Product[]
   carts     Cart[]
+  accounts  Account[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  access_token      String?
+  refresh_token     String?
+  expires_at        Int?
+  user              User    @relation(fields: [userId], references: [id])
+
+  @@unique([provider, providerAccountId])
 }
 
 model Favorite {
@@ -60,6 +77,7 @@ model Product {
   composition   String[]
   peculiarities String[]
   description   String
+  discount      Int
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -121,6 +139,10 @@ model Order {
   payment PaymentType @default(CASH) // 🔹 тип оплаты
   isPaid  Boolean     @default(false) // 🔹 флаг оплаты
 
+  //бонусы
+  bonusUsed   Int? @default(0) // сколько юзер списал
+  bonusEarned Int? @default(0) // сколько начислили за заказ
+
   email String
   phone String
 
@@ -145,6 +167,16 @@ model OrderItem {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Blog {
+  id          String   @id @unique @default(cuid())
+  title       String
+  text        String[]
+  img         String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 enum OrderStatus {

@@ -1,19 +1,12 @@
-
-
 import prisma from "@/lib/prisma";
 import CategorySlugItems from "@/shared/components/category-slug-items";
 import React from "react";
 
-interface Props {
-  className?: string;
-  params: {
-    gender: string; // "men" или "women"
-    categorySlug: string;
-    slug: string;
-  };
-}
-
-const CategorySlugPage: React.FC<Props> = async ({ params, className }) => {
+const CategorySlugPage = async ({
+  params,
+}: {
+  params: Promise<{ gender: string; categorySlug: string }>;
+}) => {
   const { gender, categorySlug } = await params;
 
   const paramsItems = {
@@ -29,10 +22,19 @@ const CategorySlugPage: React.FC<Props> = async ({ params, className }) => {
       sizes: true,
     },
   });
-  
+    const genderMap: Record<string, string> = {
+    men: "Чоловікам",
+    women: "Жінкам",
+    accessories: "Аксесуари",
+    unisex: "Унісекс",
+  };
+
+  const genderFilter = genderMap[gender] || "";
+
   return (
     <CategorySlugItems
       paramsItems={paramsItems}
+      genderFilter={genderFilter}
       productsCategorySlug={products}
     />
   );

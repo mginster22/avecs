@@ -3,19 +3,20 @@ import { categoryProducts } from "@/constants/categoryProducts";
 
 interface LayoutProps {
   children: React.ReactNode;
-  params: {
+  params: Promise<{
     gender: string;
     categorySlug: string;
-  };
+  }>;
 }
 
 // Функция, которую Next.js вызовет для генерации метаданных
 export async function generateMetadata({
   params,
 }: {
-  params: { gender: string; categorySlug: string };
+  params: Promise<{ gender: string; categorySlug: string }>;
 }): Promise<Metadata> {
   const { categorySlug, gender } = await params;
+
   const category = categoryProducts.find(
     (cat) => cat.categorySlug === categorySlug
   );
@@ -36,5 +37,7 @@ export default async function CategoryLayout({
   children,
   params,
 }: LayoutProps) {
+  const { gender, categorySlug } = await params;
+
   return <section>{children}</section>;
 }

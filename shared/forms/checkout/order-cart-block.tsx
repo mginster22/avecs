@@ -1,3 +1,4 @@
+"use client";
 import { cn } from "@/lib/utils";
 import { ProductItem } from "@/shared/components";
 import {
@@ -7,20 +8,41 @@ import {
   AccordionTrigger,
 } from "@/shared/ui/accordion";
 import { CartItem } from "@/types/product";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import React from "react";
 
 interface Props {
   className?: string;
   items: CartItem[];
+  bonus: number;
+  setBonus: (value: number) => void;
 }
 
-export const OrderCartBlock: React.FC<Props> = ({ items, className }) => {
-  const totalPrice = () => {
-    return items.reduce(
-      (acc, item) => acc + item.product.price * item.quantity,
-      0
-    );
-  };
+export const OrderCartBlock: React.FC<Props> = ({
+  items,
+  className,
+  bonus,
+  setBonus,
+}) => {
+  const { data, isLoading } = useQuery({
+    queryKey: ["user-bonus"],
+    queryFn: async () => {
+      const res = await axios.get("/api/user/update-bonus");
+      return res.data.bonusPoints;
+    },
+  });
+  const getPriceWithDiscount = (price: number, discount: number) =>
+    Math.round(price - price * (discount / 100));
+
+ const itemsTotal = items.reduce(
+  (acc: number, { product, quantity }: CartItem) =>
+    acc + getPriceWithDiscount(product.price, product.discount ?? 0) * quantity,
+  0
+);
+
+const totalPrice = Math.max(itemsTotal - bonus, 0);
+
   return (
     <div className={cn("w-1/2 max-lg:w-full ")}>
       <Accordion type="single" collapsible defaultValue="item-1">
@@ -29,6 +51,30 @@ export const OrderCartBlock: React.FC<Props> = ({ items, className }) => {
             <p>Кошик</p>
           </AccordionTrigger>
           <AccordionContent>
+            <div className="flex items-center gap-4 mb-4">
+              <input
+                type="number"
+                max={data}
+                min={0}
+                value={bonus}
+                onChange={(e) => {
+                  let value = Number(e.target.value);
+
+                  if (value > data) {
+                    value = data;
+                  } else if (value < 0) {
+                    value = 0;
+                  }
+
+                  setBonus(value);
+                }}
+                placeholder="Бонусні бали"
+                className="border-1 w-1/7 py-1"
+              />
+              <p className="text-gray-500 underline">
+                Доступно бонусних балів: {data}
+              </p>
+            </div>
             <ul className="flex flex-col gap-4 h-80 overflow-scroll max-lg:pb-10">
               {items
                 .sort(
@@ -47,7 +93,7 @@ export const OrderCartBlock: React.FC<Props> = ({ items, className }) => {
                   />
                 ))}
             </ul>
-            <p className="mt-4 text-xl pb-10">Всього: {totalPrice()} грн</p>
+            <p className="mt-4 text-xl pb-10">Всього: {totalPrice} грн</p>
           </AccordionContent>
         </AccordionItem>
       </Accordion>

@@ -7,8 +7,10 @@ export const useProducts = () => {
     queryKey: ["products"],
     queryFn: async () => {
       const { data } = await axios.get<Product[]>("/api/products");
+      console.log(data)
       return data;
     },
+    
   });
   return { data, isLoading };
 };

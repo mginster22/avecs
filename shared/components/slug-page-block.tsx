@@ -20,12 +20,14 @@ interface Props {
   slug: string;
   categorySlug: string;
   product: Product;
+  genderFilter: string
 }
 
 export const SlugPageBlock: React.FC<Props> = ({
   gender,
   categorySlug,
   product,
+  genderFilter
 }) => {
   const { addToCart } = useAddToCart();
   const { showAddToCart } = useCartStore();
@@ -65,7 +67,7 @@ const router = useRouter();
         <ChevronRight size={18} />
 
         <Link href={`/${gender}`} className="hover:underline">
-          {gender === "men" ? "Чоловікам" : "Жінкам"}
+        {genderFilter}
         </Link>
         <ChevronRight size={18} />
         <Link href={`/${gender}/${categorySlug}`} className="hover:underline">

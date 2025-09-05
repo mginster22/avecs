@@ -126,10 +126,22 @@ exports.Prisma.UserScalarFieldEnum = {
   password: 'password',
   firstName: 'firstName',
   lastName: 'lastName',
+  bonusPoints: 'bonusPoints',
   phone: 'phone',
   role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AccountScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  provider: 'provider',
+  providerAccountId: 'providerAccountId',
+  access_token: 'access_token',
+  refresh_token: 'refresh_token',
+  expires_at: 'expires_at'
 };
 
 exports.Prisma.FavoriteScalarFieldEnum = {
@@ -155,6 +167,7 @@ exports.Prisma.ProductScalarFieldEnum = {
   composition: 'composition',
   peculiarities: 'peculiarities',
   description: 'description',
+  discount: 'discount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   userId: 'userId'
@@ -194,6 +207,8 @@ exports.Prisma.OrderScalarFieldEnum = {
   status: 'status',
   payment: 'payment',
   isPaid: 'isPaid',
+  bonusUsed: 'bonusUsed',
+  bonusEarned: 'bonusEarned',
   email: 'email',
   phone: 'phone',
   region: 'region',
@@ -210,6 +225,16 @@ exports.Prisma.OrderItemScalarFieldEnum = {
   quantity: 'quantity',
   size: 'size',
   price: 'price',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BlogScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  text: 'text',
+  img: 'img',
+  description: 'description',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -248,13 +273,15 @@ exports.PaymentType = exports.$Enums.PaymentType = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  Account: 'Account',
   Favorite: 'Favorite',
   Product: 'Product',
   ProductSize: 'ProductSize',
   Cart: 'Cart',
   CartItem: 'CartItem',
   Order: 'Order',
-  OrderItem: 'OrderItem'
+  OrderItem: 'OrderItem',
+  Blog: 'Blog'
 };
 
 /**

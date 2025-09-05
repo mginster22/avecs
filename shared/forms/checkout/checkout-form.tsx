@@ -14,11 +14,13 @@ export const CheckoutForm: React.FC<Props> = ({ className }) => {
     fetchCart: { data, isLoading },
   } = useGetCart();
 
+const [bonus, setBonus] = React.useState(0);
   if (!data) return null;
+
   return (
     <div className={cn("flex gap-10 px-4 max-lg:flex-col")}>
-      <DeliveryCheckoutBlock data={data}/>
-      <OrderCartBlock items={data}/>
+      <DeliveryCheckoutBlock data={data} bonus={bonus} setBonus={setBonus}/>
+      <OrderCartBlock items={data} bonus={bonus} setBonus={setBonus}/>
     </div>
   );
 };

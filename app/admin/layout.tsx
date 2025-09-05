@@ -16,7 +16,7 @@ export default async function AdminLayout({
   return (
     <main className={inter.className}>
       <div className="flex flex-1 overflow-hidden">
-        <div className="w-full overflow-y-auto p-4">{children}</div>
+        <div >{children}</div>
       </div>
     </main>
   );

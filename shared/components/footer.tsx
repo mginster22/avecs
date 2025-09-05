@@ -62,7 +62,7 @@ export const Footer: React.FC<Props> = ({ className }) => {
     },
   ];
   return (
-    <div className={cn("bg-primary p-4 flex gap-20 max-lg:flex-col-reverse")}>
+    <div suppressHydrationWarning className={cn("bg-primary p-4 flex gap-20 mt-4 max-lg:flex-col-reverse" )}>
       {/* left */}
       <div className="flex flex-col gap-4">
         <img src="/assets/logo-footer.svg" alt="logo" className="w-50" />

@@ -13,6 +13,7 @@ interface Props {
   inputCity: string;
   inputBranch: string;
   phone: string;
+  bonus: number;
 }
 
 export const ModalSuccess: React.FC<Props> = ({
@@ -23,6 +24,7 @@ export const ModalSuccess: React.FC<Props> = ({
   inputBranch,
   inputCity,
   inputRegion,
+  bonus,
   onClose,
 }) => {
   // Чтобы закрывать модалку по Esc
@@ -35,7 +37,6 @@ export const ModalSuccess: React.FC<Props> = ({
   }, [onClose]);
 
   if (!isOpen) return null;
-
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -61,7 +62,7 @@ export const ModalSuccess: React.FC<Props> = ({
                     <p className="text-md max-lg:text-xs">
                       Ціна:
                       <span className="font-bold ">
-                        {item.product.price} грн
+                        {item.product.price -bonus}  грн
                       </span>
                     </p>
                     <p className="max-lg:text-xs">Кількість: {item.quantity}</p>

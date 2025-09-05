@@ -108,7 +108,7 @@ export const categoryProducts = [
   },
   {
     title: "Кепки",
-    imgAccessories: "/categorywomen/12.webp",
+    imgAccessories: "/aksessuary/kepki.webp",
     className: "scale-110  hover:scale-120",
     categorySlug: "kepki",
     gender:  ["accessories"],

@@ -6,17 +6,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import React from "react";
 
-interface Props {
-  className?: string;
-  params: {
-    gender: string;
-    category: string; // "men" или "women"
-  };
-}
-
 // Вспомогательная функция, чтобы сгруппировать товары по категории
 
-const GenderPage: React.FC<Props> = async ({ params, className }) => {
+const GenderPage = async ({
+  params,
+}: {
+  params: Promise<{ gender: string; categorySlug: string }>;
+}) => {
   const { gender } = await params;
   const products = await prisma.product.findMany({
     include: {

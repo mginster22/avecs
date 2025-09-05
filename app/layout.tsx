@@ -25,15 +25,17 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${montserrat.variable} font-sans`}
+        className={`${montserrat.variable} font-sans min-h-screen flex flex-col`}
       >
-        <Providers>
-          <InfoHeader />
-          <Header />
-          <ModalCart />
-          <div className="flex-1">{children}</div>
-          <Footer/>
-        </Providers>
+        <div className="flex flex-col flex-1">
+          <Providers>
+            <InfoHeader />
+            <Header />
+            <ModalCart />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </Providers>
+        </div>
       </body>
     </html>
   );

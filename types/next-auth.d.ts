@@ -8,6 +8,8 @@ declare module "next-auth" {
       firstName?: string | null;
       lastName?: string | null;
       role?: string | null;
+      password?: string | null;
+      bonusPoints?: number | null;
       phone?: string | null;
     } & DefaultSession["user"];
   }
@@ -18,6 +20,7 @@ declare module "next-auth" {
     lastName?: string | null;
     phone?: string | null;
     role?: string | null;
+    bonusPoints?: number | null;
   }
 
   interface JWT {
@@ -26,5 +29,6 @@ declare module "next-auth" {
     lastName?: string | null;
     phone?: string | null;
     role?: string | null;
+    bonusPoints?: number | null;
   }
 }

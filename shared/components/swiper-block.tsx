@@ -26,9 +26,9 @@ export const SwiperBlock: React.FC<Props> = ({
   productsImg,
   isProductImgs = false,
   swiperRef,
- 
+  isAdaptive = false,
+
   setActiveSlide,
- 
 }) => {
   const [isBeginning, setIsBeginning] = React.useState(true);
   const [isEnd, setIsEnd] = React.useState(false);
@@ -60,8 +60,8 @@ export const SwiperBlock: React.FC<Props> = ({
         1600: {
           slidesPerView: isProductImgs ? 2.1 : 3.1,
         },
-        1824: {
-          slidesPerView: isProductImgs ? 2.1 : 3.1,
+        1920: {
+          slidesPerView: isProductImgs ? 3.1 : 4.1,
         },
       }}
       className="max-h-[800px] relative"

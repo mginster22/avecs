@@ -38,7 +38,10 @@ const secondMenuItems = [
   {
     title: "Аксесуари",
     href: "/accessories",
-    category: [],
+    gender: "accessories",
+    category: categoryProducts.filter((category) =>
+      category.gender.includes("accessories")
+    ),
   },
   {
     title: "Avecs",
@@ -55,18 +58,22 @@ export const Header: React.FC<Props> = ({ className }) => {
   } = useGetCart();
 
   const { data: sessionData, status } = useSession();
-  const { toggleCart } = useCartStore();
 
+  const { toggleCart } = useCartStore();
   const { data: favoritesProduct } = useQuery({
     queryKey: ["favorite"],
     queryFn: async () => {
       const { data: product } = await axios.get<FavoriteItem[]>(
-        "/api/favorite"
+        "/api/favorite",
+        {
+          withCredentials: true,
+        }
       );
       return product;
     },
+    enabled: status === "authenticated",
   });
-  
+
   const [active, setActive] = useState(false);
 
   const router = useRouter();
@@ -76,11 +83,9 @@ export const Header: React.FC<Props> = ({ className }) => {
       router.push(`/search/?search=${inputSearchFilter}`);
     }
   };
-  if (!favoritesProduct) {
-    return null;
-  }
   return (
     <div
+      suppressHydrationWarning
       className={cn(
         "flex items-center justify-between px-10 py-4  sticky top-0 bg-secondary shadow-md  z-40 max-lg:px-2"
       )}
@@ -162,15 +167,19 @@ export const Header: React.FC<Props> = ({ className }) => {
             suppressHydrationWarning
           >
             {status === "authenticated" ? (
-              sessionData?.user.firstName
+              sessionData?.user.firstName || sessionData?.user.name
             ) : (
               <User />
             )}
           </Link>
-          <Link href="/favorites" className="relative">
-            <Heart />
-            <span className="absolute top-0 left-4 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center text-white text-xs">{favoritesProduct?.length}</span>
-          </Link>
+          {status === "authenticated" && (
+            <Link href="/favorites" className="relative">
+              <Heart />
+              <span className="absolute top-0 left-4 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center text-white text-xs">
+                {favoritesProduct?.length}
+              </span>
+            </Link>
+          )}
           <div className="relative">
             <ShoppingCart onClick={toggleCart} className=" cursor-pointer" />
             <span className="absolute top-0 left-4 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center text-white text-xs">

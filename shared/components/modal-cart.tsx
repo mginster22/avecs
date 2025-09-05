@@ -35,11 +35,16 @@ export const ModalCart: React.FC<Props> = ({ className }) => {
 
   if (!data) return null;
 
-  const totalPrice = data.reduce(
-    (acc: number, { product, quantity }: CartItem) =>
-      acc + product.price * quantity,
-    0
-  );
+ const getPriceWithDiscount = (price: number, discount: number) =>
+  Math.round(price - price * (discount / 100));
+
+const totalPrice = data.reduce(
+  (acc: number, { product, quantity }: CartItem) =>
+    acc + getPriceWithDiscount(product.price, product.discount ?? 0) * quantity,
+  0
+);
+
+  
   if (isLoading) return <div>Loading...</div>;
 
   return (
