@@ -75,13 +75,13 @@ export const Footer: React.FC<Props> = ({ className }) => {
           <img />
         </div>
       </div>
-      <ul className="grid grid-cols-4 text-secondary max-lg:grid-cols-1 max-lg:gap-2">
+      <ul className="grid grid-cols-4 min-xl:grid-cols-5 min-xl:gap-10 text-secondary max-lg:grid-cols-1 max-lg:gap-2">
         {footerItems.map((item, i) => (
           <li key={i} className="flex flex-col gap-2">
             <div
               className={cn(
                 "flex justify-between items-center",
-                item.title === "МАПА САЙТУ" && "-mt-26 max-lg:mt-0"
+                item.title === "МАПА САЙТУ" && "min-xl:mt-0  -mt-26 max-lg:mt-0"
               )}
             >
               <p

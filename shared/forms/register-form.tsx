@@ -21,6 +21,22 @@ export const RegisterForm: React.FC<Props> = ({ className }) => {
 
   const handlersubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email || !password || !firstName || !lastName || !phone) {
+      setError("Всі поля повинні бути заповнені");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Пароль повинен містити не менше 6 символів");
+      return;
+    }
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      setError("Некоректний формат email");
+      return;
+    }
+    if (!/^\+?[0-9]{10,15}$/.test(phone)) {
+      setError("Некоректний формат телефону");
+      return;
+    }
     const res = await axios.post("/api/auth/signup", {
       email,
       password,

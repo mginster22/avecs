@@ -17,9 +17,23 @@ export default async function Home() {
     orderBy: { createdAt: "desc" },
   });
   const latestPosts = posts.slice(0, 4);
+  const bannerSlider = [
+    {
+      desktop: "/assets/banner1.jpg",
+      mobile: "/assets/main_slider_mob.png",
+    },
+    {
+      desktop: "/assets/banner2.jpg",
+      mobile: "/assets/summer_avecs_comfort_600x600.jpg",
+    },
+    {
+      desktop: "/assets/banner3.png",
+      mobile: "/assets/newColl.jpg",
+    },
+  ];
   return (
     <div className="">
-      <BannerBlock />
+      <BannerBlock bannerSlider={bannerSlider} />
       <div className="grid grid-cols-2 gap-4 px-4 mt-10 max-lg:grid-cols-1">
         <InfoCartBlock
           link="/men"

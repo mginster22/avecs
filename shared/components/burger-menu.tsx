@@ -36,6 +36,7 @@ const secondMenuItems = [
   },
   { title: "Avecs" },
   { title: "Sale" },
+  { title: "Партнерам",href:"/partner" },
 ];
 
 export const BurgerMenu: React.FC<Props> = ({setActive, className }) => {
@@ -78,7 +79,14 @@ export const BurgerMenu: React.FC<Props> = ({setActive, className }) => {
               className="relative border-b-1 pb-2 cursor-pointer"
               onClick={() => toggleSubMenu(i)}
             >
-              <p className="font-light">{item.title}</p>
+
+              {item.href ==="/partner" ? (
+                <Link href={item.href} className="font-bold" onClick={() => setActive(false)}>
+                  {item.title}
+                </Link>
+              ) : (
+                <p className="font-bold">{item.title}</p>
+              )}
 
               {/* Подменю показывается только для активного пункта */}
               {item.category && item.category.length > 0 && (

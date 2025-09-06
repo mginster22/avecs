@@ -12,7 +12,7 @@ const firstMenuItems = [
   },
   {
     name: "Партнерам",
-    href: "/",
+    href: "/partner",
   },
   {
     name: "Доставка",

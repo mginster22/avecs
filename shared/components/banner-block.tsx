@@ -9,26 +9,15 @@ import Image from "next/image";
 
 interface Props {
   className?: string;
+  bannerSlider: {
+    desktop: string;
+    mobile: string;
+  }[];
 }
 
 SwiperCore.use([Autoplay]);
 
-export const BannerBlock: React.FC<Props> = ({ className }) => {
-  const bannerSlider = [
-    {
-      desktop: "/assets/banner1.jpg",
-      mobile: "/assets/main_slider_mob.png",
-    },
-    {
-      desktop: "/assets/banner2.jpg",
-      mobile: "/assets/summer_avecs_comfort_600x600.jpg",
-    },
-    {
-      desktop: "/assets/banner3.png",
-      mobile: "/assets/newColl.jpg",
-    },
-  ];
-
+export const BannerBlock: React.FC<Props> = ({ className, bannerSlider }) => {
   const swiperRef = useRef<SwiperCore | null>(null);
 
   return (
@@ -42,7 +31,7 @@ export const BannerBlock: React.FC<Props> = ({ className }) => {
           disableOnInteraction: false,
         }}
       >
-        {bannerSlider.map((item, i) => (
+        {bannerSlider!.map((item, i) => (
           <SwiperSlide key={i}>
             <Image
               src={item.desktop}

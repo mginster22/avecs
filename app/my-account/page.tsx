@@ -24,15 +24,15 @@ const userMenuItems: UserMenuItem[] = [
   {
     title: "Мої бонуси",
     values: [
-      { title: "Доступні купони", link: "/" },
-      { title: "Бонусні бали", link: "/" },
+      { title: "Доступні купони", link: "/bonus-points" },
+      { title: "Бонусні бали", link: "/bonus-points" },
     ],
   },
   {
     title: "Обліковий запис",
     values: [
       { title: "Контактна інформація", link: "/" },
-      { title: "Зміна пароля", link: "/" },
+      { title: "Зміна пароля", link: "/forgot-password" },
       { title: "Вихід" },
     ],
   },
