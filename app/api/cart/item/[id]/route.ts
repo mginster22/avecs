@@ -25,7 +25,6 @@ export async function DELETE(
     if (!cartItem) {
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
     }
-    console.log("db cartId:", cartItem.cart.id);
     // проверка на владельца
     if (session) {
       if (cartItem.cart.userId !== session.user.id) {
@@ -33,7 +32,6 @@ export async function DELETE(
       }
     } else {
       const cartId = (await cookiesStore).get("avecscookies")?.value;
-      console.log("cookie cartId:", cartId);
       if (!cartId || cartItem.cart.id !== cartId) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
       }

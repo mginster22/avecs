@@ -14,8 +14,8 @@ export const Footer: React.FC<Props> = ({ className }) => {
     {
       title: "ОБЛІКОВИЙ ЗАПИС",
       items: [
-        { title: "Вхід", href: "/signin" },
-        { title: "Реєстрація", href: "/signUp" },
+        { title: "Вхід", href: "/auth/signin" },
+        { title: "Реєстрація", href: "/auth/signup" },
       ],
     },
 
@@ -27,7 +27,7 @@ export const Footer: React.FC<Props> = ({ className }) => {
         { title: "Політика безпеки", href: "" },
         { title: "Умови згоди", href: "" },
         { title: "Контакти", href: "" },
-        { title: "Блог", href: "" },
+        { title: "Блог", href: "/blog-main" },
       ],
     },
     {
@@ -53,11 +53,11 @@ export const Footer: React.FC<Props> = ({ className }) => {
     {
       title: "МАПА САЙТУ",
       items: [
-        { title: "Чоловікам", href: "/signin" },
-        { title: "Жінкам", href: "/signUp" },
-        { title: "Аксесуари", href: "/signUp" },
-        { title: "Акції", href: "/signUp" },
-        { title: "Всі категорiї", href: "/signUp" },
+        { title: "Чоловікам", href: "/men" },
+        { title: "Жінкам", href: "/women" },
+        { title: "Аксесуари", href: "/accessories" },
+        { title: "Акції", href: "" },
+        { title: "Всі категорiї", href: "" },
       ],
     },
   ];
