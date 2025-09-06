@@ -22,13 +22,13 @@ export async function GET() {
     }
     return NextResponse.json(cart, { status: 200 });
   } else {
-    const guestId = (await cookiesStore).get("avecscookies")?.value;
-    if (!guestId) {
+    const cartId = (await cookiesStore).get("avecscookies")?.value;
+    if (!cartId) {
       // Если гостя нет — возвращаем пустую корзину
       return NextResponse.json({ items: [] }, { status: 200 });
     }
     cart = await prisma.cart.findFirst({
-      where: { guestId },
+      where: { id: cartId },
       include: { items: { include: { product: true } } },
     });
     if (!cart) {
@@ -51,15 +51,19 @@ export async function POST(req: Request) {
       cart = await prisma.cart.create({ data: { userId } });
     }
   } else {
-    let guestId = (await cookiesStore).get("avecscookies")?.value;
+    let cartId = (await cookiesStore).get("avecscookies")?.value;
 
-    if (!guestId) {
-      guestId = uuidv4();
-      (await cookiesStore).set("avecscookies", guestId);
+    if (cartId) {
+      cart = await prisma.cart.findUnique({ where: { id: cartId } });
     }
-    cart = await prisma.cart.findFirst({ where: { guestId } });
+
     if (!cart) {
-      cart = await prisma.cart.create({ data: { guestId } });
+      cart = await prisma.cart.create({ data: {} });
+      (await cookiesStore).set("avecscookies", cart.id, {
+        path: "/",
+        httpOnly: true,
+        maxAge: 60 * 60 * 24 * 30,
+      });
     }
   }
 

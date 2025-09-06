@@ -6,15 +6,15 @@ import { authOptions } from "@/lib/auth";
 
 export async function DELETE(
   req: Request,
- {
-  params,
-}: {
-  params: Promise<{ id: string;  }>;
-} // id = cartItem.id
+  {
+    params,
+  }: {
+    params: Promise<{ id: string }>;
+  }
 ) {
   try {
     const session = await getServerSession(authOptions);
-    const { id } =await params;
+    const { id } = await params;
     const cookiesStore = cookies();
 
     const cartItem = await prisma.cartItem.findUnique({
@@ -25,7 +25,7 @@ export async function DELETE(
     if (!cartItem) {
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
     }
-
+    console.log("db cartId:", cartItem.cart.id);
     // проверка на владельца
     if (session) {
       if (cartItem.cart.userId !== session.user.id) {
@@ -33,13 +33,13 @@ export async function DELETE(
       }
     } else {
       const cartId = (await cookiesStore).get("avecscookies")?.value;
+      console.log("cookie cartId:", cartId);
       if (!cartId || cartItem.cart.id !== cartId) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
       }
     }
-
-    // полностью удаляем cartItem, без уменьшения quantity
     await prisma.cartItem.delete({ where: { id } });
+    // полностью удаляем cartItem, без уменьшения quantity
 
     return NextResponse.json({ success: true });
   } catch (err) {
