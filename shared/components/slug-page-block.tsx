@@ -54,7 +54,7 @@ const router = useRouter();
       return;
     }
 
-    addToCart.mutate({ productId, size: activeSize });
+    addToCart.mutate({ productId, size: activeSize,product });
   };
 
   return (
