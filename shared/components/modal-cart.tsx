@@ -32,7 +32,6 @@ export const ModalCart: React.FC<Props> = ({ className }) => {
 
   //Очищаем корзину с сервера
   const { deleteCart } = useDeleteCart();
-
   if (!data) return null;
 
  const getPriceWithDiscount = (price: number, discount: number) =>

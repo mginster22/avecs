@@ -9,7 +9,7 @@ interface LayoutProps {
   }>;
 }
 
-// Функция, которую Next.js вызовет для генерации метаданных
+// Функция генерации метаданных
 export async function generateMetadata({
   params,
 }: {
@@ -21,15 +21,20 @@ export async function generateMetadata({
     (cat) => cat.categorySlug === categorySlug
   );
 
+  const genderMap: Record<string, string> = {
+    men: "Чоловікам",
+    women: "Жінкам",
+    accessories: "Аксесуари",
+    unisex: "Унісекс",
+  };
+
+  const genderFilter = genderMap[gender] || "";
+
   return {
     title: category
-      ? `${category.title} - ${
-          gender === "men" ? "Чоловіча колекція" : "Жіноча колекція"
-        }`
+      ? `${category.title} – ${genderFilter}`
       : "Категорія",
-    description: `Асортимент ${category?.title || ""} для ${
-      gender === "men" ? "чоловіків" : "жінок"
-    } від бренду Avecs`,
+    description: `Асортимент ${category?.title || ""} для ${genderFilter} від бренду Avecs`,
   };
 }
 

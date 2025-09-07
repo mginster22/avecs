@@ -30,7 +30,7 @@ const CategorySlugPage = async ({
   };
 
   const genderFilter = genderMap[gender] || "";
-
+console.log("products", products);
   return (
     <CategorySlugItems
       paramsItems={paramsItems}

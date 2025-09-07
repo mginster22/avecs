@@ -35,6 +35,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   initialData,
   onSuccess,
 }) => {
+  const [loading, setLoading] = useState(false);
   const { register, handleSubmit, reset, control } = useForm<ProductFormValues>(
     {
       defaultValues: initialData
@@ -100,7 +101,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   });
 
   const [imgFiles, setImgFiles] = useState<File[]>([]);
-  const [imgPreviews, setImgPreviews] = useState<string[]>(initialData?.img || []);
+  const [imgPreviews, setImgPreviews] = useState<string[]>(
+    initialData?.img || []
+  );
   const handleImgChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const files = Array.from(e.target.files);
@@ -128,39 +131,41 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       uploadedUrls.push(data.secure_url);
     }
 
-     return uploadedUrls.length > 0 ? uploadedUrls : imgPreviews; 
+    return uploadedUrls.length > 0 ? uploadedUrls : imgPreviews;
   };
 
-const onSubmit = async (data: ProductFormValues) => {
-  const uploadedUrls = await uploadImages();
-  const finalData = {
-    ...data,
-    composition: data.composition.map((c) => c.value),
-    peculiarities: data.peculiarities.map((p) => p.value),
-    img: uploadedUrls,
-  };
+  const onSubmit = async (data: ProductFormValues) => {
+    const uploadedUrls = await uploadImages();
+    const finalData = {
+      ...data,
+      composition: data.composition.map((c) => c.value),
+      peculiarities: data.peculiarities.map((p) => p.value),
+      img: uploadedUrls,
+    };
 
-  try {
-    if (initialData) {
-      // обновление
-      await axios.patch(`/api/products/${initialData.id}`, finalData);
-      alert("Товар обновлён!");
-    } else {
-      // создание
-      await axios.post("/api/products", finalData);
-      alert("Товар создан!");
+    try {
+      setLoading(true);
+      if (initialData) {
+        // обновление
+        await axios.patch(`/api/products/${initialData.id}`, finalData);
+        alert("Товар обновлён!");
+      } else {
+        // создание
+        await axios.post("/api/products", finalData);
+        alert("Товар создан!");
+      }
+
+      reset();
+      setImgFiles([]);
+      setImgPreviews([]);
+      if (onSuccess) onSuccess();
+    } catch (error) {
+      console.error(error);
+      alert("Ошибка при сохранении товара");
+    } finally {
+      setLoading(false);
     }
-
-    reset();
-    setImgFiles([]);
-    setImgPreviews([]);
-    if (onSuccess) onSuccess();
-  } catch (error) {
-    console.error(error);
-    alert("Ошибка при сохранении товара");
-  }
-};
-
+  };
 
   return (
     <form
@@ -360,9 +365,10 @@ const onSubmit = async (data: ProductFormValues) => {
 
       <button
         type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded"
+        className={cn("bg-blue-600 text-white px-4 py-2 rounded", loading && "opacity-50")}
+        disabled={loading}
       >
-      {initialData ? "Изменить" : "Создать"}
+        {initialData ? "Изменить" : "Создать"}
       </button>
     </form>
   );

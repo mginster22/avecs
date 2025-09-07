@@ -30,7 +30,7 @@ const useCartStore = create<CartStore>((set) => ({
 
     setTimeout(() => {
       set({ isAddToCart: false, addToCartMessage: null });
-    }, 3500);
+    }, 1500);
   },
 }));
 

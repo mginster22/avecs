@@ -21,15 +21,15 @@ export default async function SlugPage({
     include: { sizes: true },
   });
 
-  if (!product) notFound();
  const genderMap: Record<string, string> = {
     men: "Чоловікам",
     women: "Жінкам",
     accessories: "Аксесуари",
     unisex: "Унісекс",
   };
-
+  
   const genderFilter = genderMap[gender] || "";
+  if (!product) notFound();
   return (
     <SlugPageBlock
       gender={gender}

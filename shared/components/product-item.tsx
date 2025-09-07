@@ -40,7 +40,10 @@ export const ProductItem: React.FC<Props> = ({
   const [activeSize, setActiveSize] = React.useState<string | undefined>(
     undefined
   );
+  
   const session = useSession();
+
+  const [loading, setLoading] = React.useState(false);
 
   const { data: favorites } = useQuery({
     queryKey: ["favorite"], // ✅ массив ключа
@@ -78,8 +81,10 @@ export const ProductItem: React.FC<Props> = ({
       });
       return;
     }
+  
 
-    addToCart.mutate({ productId, size: activeSize });
+    addToCart.mutate({ productId, size: activeSize,product});
+     
   };
 
   const handleIncrement = () => {
@@ -297,7 +302,8 @@ export const ProductItem: React.FC<Props> = ({
           ) : (
             `${product.price}грн`
           )}
-          <span
+          <button
+            disabled={!activeSize}
             onClick={() => {
               if (
                 !addToCart.isPending &&
@@ -310,6 +316,7 @@ export const ProductItem: React.FC<Props> = ({
             }}
             className={cn(
               "px-[10px] py-[6px] bg-chart-5 rounded-md transition-all cursor-pointer hover:bg-chart-1 hover:text-white",
+              ( !activeSize ) && "opacity-50 pointer-events-none",
               orderItem
                 ? "hidden" // если есть orderItem — отключаем
                 : cartCheckOutProduct
@@ -328,7 +335,7 @@ export const ProductItem: React.FC<Props> = ({
             ) : (
               <ShoppingCart size={20} color="white" />
             )}
-          </span>
+          </button>
         </span>
       </div>
     </div>
