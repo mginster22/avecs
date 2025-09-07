@@ -7,7 +7,8 @@ export const useUpdateQuantityCartOrder = () => {
   const updateQuantity = useMutation({
     mutationKey: ["updateQuantity"],
     mutationFn: async ({ id, quantity }: { id: string; quantity: number }) => {
-      const res = await axios.patch(`/api/cart/${id}`, { quantity });
+      const res = await axios.patch(`/api/cart/${id}`, { quantity },{withCredentials:true});
+      console.log(res.data);
       return res.data; // важно!
     },
     onMutate: async ({ id, quantity }) => {

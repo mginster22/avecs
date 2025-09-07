@@ -69,12 +69,12 @@ const totalPrice = data.reduce(
         {data.length > 0 && (
           <div className="px-4 py-2 flex items-center justify-between border-b">
             <X size={28} onClick={toggleCart} className="cursor-pointer" />
-            <span
+            <button
               className="text-md font-semibold hover:text-chart-1 transition-all cursor-pointer"
               onClick={() => deleteCart.mutate()}
             >
               Видалити кошик
-            </span>
+            </button>
           </div>
         )}
 

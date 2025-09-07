@@ -5,53 +5,34 @@ import { cookies } from "next/headers";
 import { authOptions } from "@/lib/auth";
 
 
-export async function PATCH(
-  req: Request,
-  {
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}
-) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const { quantity } = await req.json();
 
   if (typeof quantity !== "number" || quantity < 1) {
-    return NextResponse.json(
-      { error: "Quantity must be at least 1" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Quantity must be at least 1" }, { status: 400 });
   }
+
   const session = await getServerSession(authOptions);
-  const cookiesStore = cookies();
+  const guestId = (await cookies()).get("avecscookies")?.value;
+
+  const cartItem = await prisma.cartItem.findUnique({
+    where: { id },
+    include: { cart: true },
+  });
+
+  if (!cartItem) {
+    return NextResponse.json({ error: "Item not found" }, { status: 404 });
+  }
+
   if (session) {
-    const userId = session.user.id;
-    const cartItem = await prisma.cartItem.findUnique({
-      where: { id },
-      include: { cart: true },
-    });
-
-    if (!cartItem) {
-      return NextResponse.json({ error: "Item not found" }, { status: 404 });
-    }
-
-    // проверка владельца
-    if (cartItem.cart.userId !== userId) {
+    // Проверка авторизованного пользователя
+    if (cartItem.cart.userId !== session.user.id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
   } else {
-    const guestId = (await cookiesStore).get("avecscookies")?.value;
-    const cartItem = await prisma.cartItem.findUnique({
-      where: { id },
-      include: { cart: true },
-    });
-
-    if (!cartItem) {
-      return NextResponse.json({ error: "Item not found" }, { status: 404 });
-    }
-
-    // проверка владельца
-    if (cartItem.cart.guestId !== guestId) {
+    // Проверка гостя
+    if (!guestId || cartItem.cartId !== guestId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
   }
@@ -61,8 +42,10 @@ export async function PATCH(
     data: { quantity },
   });
 
+  console.log("✅ Updated cart item:", updatedItem);
   return NextResponse.json(updatedItem);
 }
+
 
 export async function DELETE(
   req: Request,
@@ -93,7 +76,7 @@ export async function DELETE(
   } else {
     const guestId = (await cookiesStore).get("avecscookies")?.value;
     const cartItem = await prisma.cartItem.findUnique({
-      where: { id },
+      where: { id:guestId },
       include: { cart: true },
     });
 

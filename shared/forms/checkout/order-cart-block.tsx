@@ -10,6 +10,7 @@ import {
 import { CartItem } from "@/types/product";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import React from "react";
 
 interface Props {
@@ -25,23 +26,27 @@ export const OrderCartBlock: React.FC<Props> = ({
   bonus,
   setBonus,
 }) => {
+  const { status } = useSession();
+  
   const { data, isLoading } = useQuery({
     queryKey: ["user-bonus"],
     queryFn: async () => {
       const res = await axios.get("/api/user/update-bonus");
       return res.data.bonusPoints;
     },
+      enabled:status === "authenticated"
   });
   const getPriceWithDiscount = (price: number, discount: number) =>
     Math.round(price - price * (discount / 100));
 
- const itemsTotal = items.reduce(
-  (acc: number, { product, quantity }: CartItem) =>
-    acc + getPriceWithDiscount(product.price, product.discount ?? 0) * quantity,
-  0
-);
+  const itemsTotal = items.reduce(
+    (acc: number, { product, quantity }: CartItem) =>
+      acc +
+      getPriceWithDiscount(product.price, product.discount ?? 0) * quantity,
+    0
+  );
 
-const totalPrice = Math.max(itemsTotal - bonus, 0);
+  const totalPrice = Math.max(itemsTotal - bonus, 0);
 
   return (
     <div className={cn("w-1/2 max-lg:w-full ")}>
@@ -51,7 +56,9 @@ const totalPrice = Math.max(itemsTotal - bonus, 0);
             <p>Кошик</p>
           </AccordionTrigger>
           <AccordionContent>
-            <div className="flex items-center gap-4 mb-4">
+            {/* бонусы */}
+
+            {status==="authenticated"&&<div className="flex items-center gap-4 mb-4">
               <input
                 type="number"
                 max={data}
@@ -74,7 +81,8 @@ const totalPrice = Math.max(itemsTotal - bonus, 0);
               <p className="text-gray-500 underline">
                 Доступно бонусних балів: {data}
               </p>
-            </div>
+            </div>}
+            
             <ul className="flex flex-col gap-4 h-80 overflow-scroll max-lg:pb-10">
               {items
                 .sort(

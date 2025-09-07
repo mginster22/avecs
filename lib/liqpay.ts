@@ -1,5 +1,4 @@
 import crypto from "crypto";
-import { v4 as uuidv4} from "uuid";
 const LIQPAY_PUBLIC_KEY = process.env.LIQPAY_PUBLIC_KEY!;
 const LIQPAY_PRIVATE_KEY = process.env.LIQPAY_PRIVATE_KEY!;
 
@@ -17,8 +16,8 @@ export function generateLiqPayForm(
     description,
      sandbox: 1, 
     order_id: orderId,
-    result_url: `http://localhost:3000/success?orderId=${orderId}`,
-    server_url: `https://d2eac745212e.ngrok-free.app/api/liqpay/callback`,
+    result_url: `https://avecs.vercel.app/success?orderId=${orderId}`,
+    server_url: `https://avecs.vercel.app/api/liqpay/callback`,
   };
 
   const dataStr = Buffer.from(JSON.stringify(data)).toString("base64");

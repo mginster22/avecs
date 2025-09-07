@@ -3,7 +3,6 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { v4 as uuidv4 } from "uuid";
 
 export async function GET() {
   //1.Смотрим, авторизован ли пользователь
@@ -51,14 +50,19 @@ export async function POST(req: Request) {
       cart = await prisma.cart.create({ data: { userId } });
     }
   } else {
-    let cartId = (await cookiesStore).get("avecscookies")?.value;
+    let guestId = (await cookiesStore).get("avecscookies")?.value;
 
-    if (cartId) {
-      cart = await prisma.cart.findUnique({ where: { id: cartId } });
+    if (guestId) {
+      cart = await prisma.cart.findUnique({ where: { id: guestId } });
     }
 
     if (!cart) {
-      cart = await prisma.cart.create({ data: {} });
+      let newGuestId = guestId || crypto.randomUUID(); // или cart.id
+      cart = await prisma.cart.create({
+        data: {
+          guestId: newGuestId, // <-- важно!
+        },
+      });
       (await cookiesStore).set("avecscookies", cart.id, {
         path: "/",
         httpOnly: true,
@@ -161,8 +165,8 @@ export async function DELETE(req: Request) {
     return NextResponse.json(cart);
   } else {
     const guestId = (await cookiesStore).get("avecscookies")?.value;
-    await prisma.cartItem.deleteMany({ where: { cart: { guestId } } });
-    const cart = await prisma.cart.deleteMany({ where: { guestId } });
+    await prisma.cartItem.deleteMany({ where: { cart: { id: guestId } } });
+    const cart = await prisma.cart.deleteMany({ where: { id: guestId } });
     return NextResponse.json(cart);
   }
 }
