@@ -28,7 +28,6 @@ const CategorySlugItems: React.FC<Props> = ({
       ? productsCategorySlug[0].category || productsCategorySlug[0].categorySlug
       : categorySlug.replace("-", " ");
 
-console.log(gender)
 
   return (
     <div className={cn("flex flex-col ")}>

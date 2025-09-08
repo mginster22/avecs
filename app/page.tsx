@@ -52,7 +52,7 @@ export default async function Home() {
       </div>
       <NewCollectionBlock products={products} />
       <div className=" p-4">
-        <h2 className="text-6xl font-bold "> Останні публікації в блозі</h2>
+        <h2 className="text-6xl font-bold max-lg:text-4xl"> Останні публікації в блозі</h2>
         <div className="p-4 grid grid-cols-4 gap-3 max-lg:grid-cols-1">
           {latestPosts.map((post) => (
             <InfoCartBlock

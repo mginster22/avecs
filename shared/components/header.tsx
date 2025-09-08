@@ -1,9 +1,9 @@
 "use client";
 import { categoryProducts } from "@/constants/categoryProducts";
 import useCartStore from "@/store/useCartStore";
-import { Heart, Menu, Search, ShoppingCart, User } from "lucide-react";
+import { Heart, Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useGetCart } from "../hooks/useGetCart";
 import { useSession } from "next-auth/react";
 import { ModalAddToCart } from "./modal-add-to-cart";
@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { FavoriteItem } from "@/types/product";
+import { useClickAway } from "react-use";
 
 interface Props {
   className?: string;
@@ -75,13 +76,19 @@ export const Header: React.FC<Props> = ({ className }) => {
   });
 
   const [active, setActive] = useState(false);
-
+  const [activeSearch, setActiveSearch] = useState(false);
   const router = useRouter();
+  const searchRef = useRef(null);
+
+  useClickAway(searchRef, () => {
+    setActiveSearch(false);
+  });
 
   const handlerRedirect = (inputSearchFilter: string) => {
     if (inputSearchFilter) {
       router.push(`/search/?search=${inputSearchFilter}`);
     }
+    setInputSearchFilter("");
   };
   return (
     <div
@@ -131,18 +138,19 @@ export const Header: React.FC<Props> = ({ className }) => {
         </ul>
       </div>
 
-      {/* input SEARCH */}
       <div className="flex items-center gap-4">
+        {/* input SEARCH */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
             handlerRedirect(inputSearchFilter);
           }}
+          className="relative "
         >
+          {/* search для lg больших */}
           <label
             className={cn(
-              " flex items-center transition-all duration-300 border-b border-accent-foreground focus-within:border focus-within:border-accent-foreground focus-within:rounded-xl ",
-              "max-lg:hidden"
+              " flex items-center transition-all duration-300 border-b border-accent-foreground focus-within:border focus-within:border-accent-foreground focus-within:rounded-xl max-lg:hidden"
             )}
           >
             <button
@@ -152,12 +160,44 @@ export const Header: React.FC<Props> = ({ className }) => {
               <Search />
             </button>
             <input
-              className="outline-none pl-4 pr-4 py-2 w-40 transition-all duration-300 focus:w-90"
+              className="outline-none pl-4 pr-4 py-2 w-40 transition-all duration-300 focus:w-90 "
               placeholder="Пошук"
               value={inputSearchFilter}
               onChange={(e) => setInputSearchFilter(e.target.value)}
             />
           </label>
+
+          {/* search для max-lg маленьких*/}
+          {!activeSearch && (
+            <Search
+              size={24}
+              onClick={() => setActiveSearch(true)}
+              className="cursor-pointer lg:hidden"
+            />
+          )}
+
+          {/* Поле поиска */}
+          <div
+            ref={searchRef}
+            className={cn(
+              "absolute -top-5 -right-30 flex items-center border rounded-md lg:hidden bg-accent transition-all duration-300 ease-in-out overflow-hidden z-50",
+              activeSearch
+                ? "opacity-100 translate-x-0 w-74 px-2"
+                : "opacity-0 translate-x-0 w-0 px-0"
+            )}
+          >
+            <input
+              className="outline-none px-2 py-2 flex-1 bg-transparent"
+              placeholder="Пошук"
+              autoFocus
+              value={inputSearchFilter}
+              onChange={(e) => setInputSearchFilter(e.target.value)}
+            />
+            |
+            <button type="submit">
+              <Search size={20} />
+            </button>
+          </div>
         </form>
 
         {/* Кнопки */}

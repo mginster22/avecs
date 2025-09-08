@@ -8,8 +8,8 @@ import React, { useState } from "react";
 
 interface Props {
   className?: string;
-  active:boolean;
-  setActive: React.Dispatch<React.SetStateAction<boolean>>
+  active: boolean;
+  setActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const secondMenuItems = [
@@ -32,14 +32,17 @@ const secondMenuItems = [
   {
     title: "Аксесуари",
     href: "/accessories",
-    category: [],
+    gender: "accessories",
+    category: categoryProducts.filter((category) =>
+      category.gender.includes("accessories")
+    ),
   },
   { title: "Avecs" },
   { title: "Sale" },
-  { title: "Партнерам",href:"/partner" },
+  { title: "Партнерам", href: "/partner" },
 ];
 
-export const BurgerMenu: React.FC<Props> = ({setActive, className }) => {
+export const BurgerMenu: React.FC<Props> = ({ setActive, className }) => {
   const { data: session } = useSession();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
@@ -59,16 +62,20 @@ export const BurgerMenu: React.FC<Props> = ({setActive, className }) => {
           "absolute top-13 right-2 bg-chart-5 text-secondary w-90 ",
           className
         )}
-          onClick={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-10">
           {session?.user ? (
             <div className="bg-[#3464AC] px-4 py-2">
-              <p>Мій кабінет</p>
+              <Link href="/my-account" onClick={() => setActive(false)}>
+                Мій кабінет
+              </Link>
             </div>
           ) : (
-            <div>
-              <p>Увійти</p>
+            <div className="bg-[#3464AC] px-4 py-2">
+              <Link href="/auth/signin" onClick={() => setActive(false)}>
+                Увійти
+              </Link>
             </div>
           )}
         </div>
@@ -79,9 +86,12 @@ export const BurgerMenu: React.FC<Props> = ({setActive, className }) => {
               className="relative border-b-1 pb-2 cursor-pointer"
               onClick={() => toggleSubMenu(i)}
             >
-
-              {item.href ==="/partner" ? (
-                <Link href={item.href} className="font-bold" onClick={() => setActive(false)}>
+              {item.href === "/partner" ? (
+                <Link
+                  href={item.href}
+                  className="font-bold"
+                  onClick={() => setActive(false)}
+                >
                   {item.title}
                 </Link>
               ) : (
@@ -104,7 +114,7 @@ export const BurgerMenu: React.FC<Props> = ({setActive, className }) => {
                         <Link
                           href={`/${item.gender}/${sub.categorySlug}`}
                           className="font-light"
-                           onClick={() => setActive(false)}
+                          onClick={() => setActive(false)}
                         >
                           {sub.title}
                         </Link>

@@ -12,3 +12,4 @@ export {CharachteristikProductBlock} from './charachteristik-product-block';
 export {InfoDeliveryOplata} from './info-delivery-oplata';
 export {AuthItemsBlock} from './auth-items-block';
 export {Footer} from './footer';
+export {ModalFilters} from './modal-filters';

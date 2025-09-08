@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { filters } from "@/constants/filters";
 import { ChevronDown, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ModalFilters } from "./modal-filters";
 
 interface Props {
   selectedOptions: Record<string, string[]>;
@@ -62,25 +63,19 @@ export default function FiltersInputGroup({
   };
 
   return (
-    <div>
-      <div className="flex items-center gap-2 max-lg:hidden">
-        <SlidersHorizontal />
-        <h1 className="text-2xl font-light text-chart-2 ">Фільтр</h1>
-      </div>
+    <>
+      <ModalFilters toggleOptionSimple={toggleOptionSimple} selectedOptions={selectedOptions} setSelectedOptions={setSelectedOptions} priceRange={priceRange} setPriceRange={setPriceRange}/>
+      <div className="max-lg:hidden">
+        <div className="flex items-center gap-2 max-lg:hidden">
+          <SlidersHorizontal />
+          <h1 className="text-2xl font-light text-chart-2 ">Фільтр</h1>
+        </div>
 
-      <div
-        className={cn(
-          "grid grid-cols-4 gap-4 mt-10 max-lg:hidden",
-          isCategorySlug && "grid-cols-3"
-        )}
-        ref={containerRef}
-      >
-        {filters
-          .filter(({ id }) => {
-            if (!isCategorySlug) return true; // если флаг не включен — показываем всё
-            return id === "color" || id === "season" || id === "price"; // показываем только нужные
-          })
-          .map(({ id, name, options, type }) => (
+        <div
+          className={cn("grid grid-cols-4 gap-4 mt-10 max-lg:hidden")}
+          ref={containerRef}
+        >
+          {filters.map(({ id, name, options, type }) => (
             <div key={id} className="relative">
               <button
                 onClick={() => toggleCategory(id)}
@@ -166,7 +161,8 @@ export default function FiltersInputGroup({
               )}
             </div>
           ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
