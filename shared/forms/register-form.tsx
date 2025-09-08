@@ -2,15 +2,17 @@
 import { Button } from "@/shared/ui/button";
 import { InputCustom } from "@/shared/ui/input-custom";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-
 
 interface Props {
   className?: string;
 }
 
 export const RegisterForm: React.FC<Props> = ({ className }) => {
+  const { data: session } = useSession();
+  console.log(session);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
@@ -37,14 +39,28 @@ export const RegisterForm: React.FC<Props> = ({ className }) => {
       setError("Некоректний формат телефону");
       return;
     }
-    const res = await axios.post("/api/auth/signup", {
-      email,
-      password,
-      firstName,
-      lastName,
-      phone,
-    });
-    router.push("/auth/signin");
+    if (session?.user.email === email) {
+      setError("Користувач з таким email вже існує");
+      return;
+    }
+
+    try {
+      await axios.post("/api/auth/signup", {
+        email,
+        password,
+        firstName,
+        lastName,
+        phone,
+      });
+      router.push("/auth/signin");
+    } catch (err: any) {
+      console.log(err);
+      if (err.response?.data?.message) {
+        setError(err.response.data.message); // <-- сообщение от API
+      } else {
+        setError("Сталася помилка. Спробуйте пізніше.");
+      }
+    }
   };
   return (
     <div className="flex flex-col gap-4 w-1/2 max-lg:w-full">
@@ -60,6 +76,7 @@ export const RegisterForm: React.FC<Props> = ({ className }) => {
           labelName="Ім'я"
           type="text"
           placeholder="Ім'я"
+          
           value={firstName}
           onChange={(val) => setFirstName(val)} // <-- string
         />

@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   });
   if (existingUser) {
     return NextResponse.json(
-      { message: "Пользователь с таким email уже существует" },
+      { message: "Користувач з таким email вже існує" },
       { status: 400 }
     );
   }

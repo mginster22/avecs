@@ -45,7 +45,7 @@ export const InputCustom: React.FC<Props> = ({
           country={"ua"}
           specialLabel=""
           countryCodeEditable={false}
-            disableDropdown={true}  
+          disableDropdown={true}
           value={props.value}
           onChange={(val) => props.onChange?.("+" + val)} // ← всегда с "+"
           onlyCountries={["ua"]}
