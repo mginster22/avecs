@@ -189,7 +189,6 @@ export const Header: React.FC<Props> = ({ className }) => {
             <input
               className="outline-none px-2 py-2 flex-1 bg-transparent"
               placeholder="Пошук"
-              autoFocus
               value={inputSearchFilter}
               onChange={(e) => setInputSearchFilter(e.target.value)}
             />
