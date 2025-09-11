@@ -204,6 +204,7 @@ export const Header: React.FC<Props> = ({ className }) => {
           <Link
             href={status === "authenticated" ? "/my-account" : "/auth/signin"}
             suppressHydrationWarning
+            className="max-lg:max-w:[80px]"
           >
             {status === "authenticated" ? (
               sessionData?.user.firstName || sessionData?.user.name
