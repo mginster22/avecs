@@ -138,7 +138,7 @@ export const Header: React.FC<Props> = ({ className }) => {
         </ul>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 miw-w-0">
         {/* input SEARCH */}
         <form
           onSubmit={(e) => {
@@ -204,7 +204,7 @@ export const Header: React.FC<Props> = ({ className }) => {
           <Link
             href={status === "authenticated" ? "/my-account" : "/auth/signin"}
             suppressHydrationWarning
-            className="max-lg:max-w:[80px]"
+            className="block max-w-[80px] truncate"
           >
             {status === "authenticated" ? (
               sessionData?.user.firstName || sessionData?.user.name
